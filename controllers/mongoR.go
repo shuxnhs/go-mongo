@@ -40,8 +40,8 @@ func (ctx *MongoRController) CountData() {
 // @Param	mongoKey		query 	string	true		"mongoKey"
 // @Param   collection		query	string  true		"集合名"
 // @Param   objectId		query	string   true		"对象ID"
-// @Success 0 {string} 清空成功
-// @Failure 1 {string} 清空失败错误信息
+// @Success 0 {string} 获取成功
+// @Failure 1 {string} 获取失败错误信息
 // @router /Retrieve [get]
 func (ctx *MongoRController) Retrieve() {
 	objectId := ctx.GetString("objectId")
@@ -84,7 +84,7 @@ func (ctx *MongoRController) GetDataList() {
 
 // @Title 自由获取文档
 // @Description 通过条件，获取一条文档,{"ret": 200, "msg": "", "data": {"code": 0, "msg": "查询成功", "data": {"_id": "5da368b34a0bab8c655a8142", "age": 18, "name": "hxh"}}}
-// @Param	mongoKey		query 	string	true		"用户mongoKey"
+// @Param	mongoKey		query 	string	true		"mongoKey"
 // @Param   collection		query	string  true		"集合名"
 // @Param   filter          query   string  true        "查找文档的条件，json传递，如{"name":"hxh"}"
 // @router /FreeFindOne [get]
@@ -108,7 +108,7 @@ func (ctx *MongoRController) FreeFindOne() {
 
 // @Title 自由获取文档
 // @Description 自由获取collection指定条数文档,{"ret": 200, "msg": "", "data": {"code": 0, "msg": "查询成功", "data": {"_id": "5da368b34a0bab8c655a8142", "age": 18, "name": "hxh"}}}
-// @Param	mongoKey		query 	string	true		"用户mongoKey"
+// @Param	mongoKey		query 	string	true		"mongoKey"
 // @Param   collection		query	string  true		"集合名"
 // @Param   projection  	query	string  false		"指定返回的字段，比如只返回name就{"name":1},不返回name就{"name":0},默认返回全部"
 // @Param   filter  		query	string  true		"条件查找文档的条件，如{"name":"hxh"}"

@@ -11,6 +11,118 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 basePath: /v1
 paths:
+  /mongoC/CreateOneDocument:
+    post:
+      tags:
+      - mongoC
+      description: '为collection添加一条文档，{"ret": 200, "msg": "", "data": {"code": 0,
+        "msg": "新增成功", "data": {"InsertedID": "5e6a6fbdce6ee32678ad1a95"}}}'
+      operationId: MongoCController.Creating Objects
+      parameters:
+      - in: query
+        name: mongoKey
+        description: 用户mongoKey
+        required: true
+        type: string
+      - in: query
+        name: collection
+        description: 集合名
+        required: true
+        type: string
+      - in: query
+        name: document
+        description: 要插入的文档，JSON格式
+        required: true
+        type: string
+      responses:
+        "0":
+          description: '{string} 添加成功，返回对象id,InsertedID：_id'
+        "1":
+          description: '{string} 添加失败'
+  /mongoC/MultiCreateDocuments:
+    post:
+      tags:
+      - mongoC
+      description: '为collection批量添加文档，{"ret": 200, "msg": "", "data": {"code": 0,
+        "msg": "添加成功", "data": {"InsertedIDs": ["5e6a71a42a44314bfb004fbe", "5e6a71a42a44314bfb004fbf"]}}}'
+      operationId: MongoCController.批量添加文档数据
+      parameters:
+      - in: query
+        name: mongoKey
+        description: 用户mongoKey
+        required: true
+        type: string
+      - in: query
+        name: collection
+        description: 集合名
+        required: true
+        type: string
+      - in: query
+        name: documents
+        description: 要批量插入的文档
+        required: true
+        type: string
+      responses:
+        "0":
+          description: '{string} 添加成功，返回对象id的数组,InsertedID：_id'
+        "1":
+          description: '{string} 添加失败'
+  /mongoD/DeleteOneData:
+    post:
+      tags:
+      - mongoD
+      description: '精确查找删除一份文档，{"ret": 200, "msg": "", "data": {"code": 0, "msg":
+        "删除成功", "data": {"DeletedCount": 1}}}'
+      operationId: MongoDController.删除一份文档
+      parameters:
+      - in: query
+        name: mongoKey
+        description: mongoKey
+        required: true
+        type: string
+      - in: query
+        name: collection
+        description: 集合名
+        required: true
+        type: string
+      - in: query
+        name: filter
+        description: 删除文档的条件{name:hxh}
+        required: true
+        type: string
+      responses:
+        "0":
+          description: '{string} 清空成功'
+        "1":
+          description: '{string} 清空失败错误信息'
+  /mongoD/MultiDeleteData:
+    post:
+      tags:
+      - mongoD
+      description: '精确查找删除多份文档,{"ret": 200, "msg": "", "data": {"code": 0, "msg":
+        "删除成功", "data": {"DeletedCount": 2}}}'
+      operationId: MongoDController.删除多份文档
+      parameters:
+      - in: query
+        name: mongoKey
+        description: mongoKey
+        required: true
+        type: string
+      - in: query
+        name: collection
+        description: 集合名
+        required: true
+        type: string
+      - in: query
+        name: filter
+        description: 删除文档的条件{name:hxh}
+        required: true
+        type: string
+      responses:
+        "0":
+          description: '{string} 清空成功'
+        "1":
+          description: '{string} 清空失败错误信息'
   /mongoR/CountData:
     get:
       tags:
@@ -47,7 +159,7 @@ paths:
       parameters:
       - in: query
         name: mongoKey
-        description: 用户mongoKey
+        description: mongoKey
         required: true
         type: string
       - in: query
@@ -76,7 +188,7 @@ paths:
       parameters:
       - in: query
         name: mongoKey
-        description: 用户mongoKey
+        description: mongoKey
         required: true
         type: string
       - in: query
@@ -160,9 +272,9 @@ paths:
         type: string
       responses:
         "0":
-          description: '{string} 清空成功'
+          description: '{string} 获取成功'
         "1":
-          description: '{string} 清空失败错误信息'
+          description: '{string} 获取失败错误信息'
   /mongodb/AddMongoConfig:
     get:
       tags:
