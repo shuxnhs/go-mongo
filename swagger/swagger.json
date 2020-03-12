@@ -1,0 +1,486 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "beego Test API",
+        "description": "beego has a very cool tools to autogenerate documents for your API",
+        "version": "1.0.0",
+        "termsOfService": "http://beego.me/",
+        "contact": {
+            "email": "astaxie@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "basePath": "/v1",
+    "paths": {
+        "/mongoR/CountData": {
+            "get": {
+                "tags": [
+                    "mongoR"
+                ],
+                "description": "自由获取文档的条数, 返回：{ \"ret\": 200, \"msg\": \"\", \"data\": { \"code\": 0, \"msg\": \"获取成功\", \"data\": 4}}",
+                "operationId": "MongoRController.获取文档的条数",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "mongoKey",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "collection",
+                        "description": "集合名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "filter",
+                        "description": "查找文档的条件，查找全部传空json，如{name:hxh}",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} 更新成功的文档数量/更新失败的错误信息"
+                    }
+                }
+            }
+        },
+        "/mongoR/FreeFindOne": {
+            "get": {
+                "tags": [
+                    "mongoR"
+                ],
+                "description": "通过条件，获取一条文档,{\"ret\": 200, \"msg\": \"\", \"data\": {\"code\": 0, \"msg\": \"查询成功\", \"data\": {\"_id\": \"5da368b34a0bab8c655a8142\", \"age\": 18, \"name\": \"hxh\"}}}",
+                "operationId": "MongoRController.自由获取文档",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "用户mongoKey",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "collection",
+                        "description": "集合名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "filter",
+                        "description": "查找文档的条件，json传递，如{name:hxh}",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "{string} 获取成功"
+                    },
+                    "1": {
+                        "description": "{string} 集合文档为空"
+                    }
+                }
+            }
+        },
+        "/mongoR/FreeGetDataList": {
+            "get": {
+                "tags": [
+                    "mongoR"
+                ],
+                "description": "自由获取collection指定条数文档,{\"ret\": 200, \"msg\": \"\", \"data\": {\"code\": 0, \"msg\": \"查询成功\", \"data\": {\"_id\": \"5da368b34a0bab8c655a8142\", \"age\": 18, \"name\": \"hxh\"}}}",
+                "operationId": "MongoRController.自由获取文档",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "用户mongoKey",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "collection",
+                        "description": "集合名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "projection",
+                        "description": "指定返回的字段，比如只返回name就{name:1},不返回name就{name:0},默认返回全部",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "filter",
+                        "description": "条件查找文档的条件，如{name:hxh}",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "num",
+                        "description": "获取条数",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "{string} 清空成功"
+                    },
+                    "1": {
+                        "description": "{string} 清空失败错误信息"
+                    }
+                }
+            }
+        },
+        "/mongoR/GetDataList": {
+            "get": {
+                "tags": [
+                    "mongoR"
+                ],
+                "description": "获取collection指定条数文档{\"ret\": 200, \"msg\": \"\", \"data\": {\"code\": 0, \"msg\": \"查询成功\", \"data\": [{\"_id\": \"5da368b34a0bab8c655a8142\", \"age\": 18, \"name\": \"hxh\"}]}}",
+                "operationId": "MongoRController.获取n份文档",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "mongoKey",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "collection",
+                        "description": "集合名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "num",
+                        "description": "获取条数",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "{string} 获取成功"
+                    },
+                    "1": {
+                        "description": "{string} 集合文档为空"
+                    },
+                    "2": {
+                        "description": "{string} mongoDb其他查询错误"
+                    }
+                }
+            }
+        },
+        "/mongoR/Retrieve": {
+            "get": {
+                "tags": [
+                    "mongoR"
+                ],
+                "description": "获取collection指定文档",
+                "operationId": "MongoRController.获取文档",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "mongoKey",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "collection",
+                        "description": "集合名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "objectId",
+                        "description": "对象ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "{string} 清空成功"
+                    },
+                    "1": {
+                        "description": "{string} 清空失败错误信息"
+                    }
+                }
+            }
+        },
+        "/mongodb/AddMongoConfig": {
+            "get": {
+                "tags": [
+                    "mongodb"
+                ],
+                "description": "添加配置接口",
+                "operationId": "MongoConfigController.添加mongodb配置",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "项目mongo_key",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "host",
+                        "description": "项目mongodb的域名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "port",
+                        "description": "项目mongodb的端口",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "user",
+                        "description": "项目mongodb的用户",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "password",
+                        "description": "项目mongodb的密码",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "dbname",
+                        "description": "项目mongodb的数据库名",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} 添加成功"
+                    },
+                    "400": {
+                        "description": "{string} 添加失败"
+                    }
+                }
+            }
+        },
+        "/mongodb/CheckMongoConnect": {
+            "get": {
+                "tags": [
+                    "mongodb"
+                ],
+                "description": "检测是否可以连接上mongoDB",
+                "operationId": "MongoConfigController.检测是否可以连接上mongoDB",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "项目mongo_key",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "{string}\t连接成功"
+                    },
+                    "1": {
+                        "description": "{string}  连接失败"
+                    }
+                }
+            }
+        },
+        "/mongodb/DeleteMongoConfig": {
+            "get": {
+                "tags": [
+                    "mongodb"
+                ],
+                "description": "删除mongodb配置",
+                "operationId": "MongoConfigController.删除mongodb配置",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "项目mongo_key",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} 删除成功"
+                    },
+                    "400": {
+                        "description": "{string} 删除失败"
+                    }
+                }
+            }
+        },
+        "/mongodb/GetMongoConfig": {
+            "get": {
+                "tags": [
+                    "mongodb"
+                ],
+                "description": "获取mongodb配置",
+                "operationId": "MongoConfigController.获取mongodb配置",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "项目mongo_key",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "{string}\t配置存在"
+                    },
+                    "1": {
+                        "description": "{string}  配置不存在"
+                    }
+                }
+            }
+        },
+        "/mongodb/SaveMongoConfig": {
+            "post": {
+                "tags": [
+                    "mongodb"
+                ],
+                "description": "添加配置接口",
+                "operationId": "MongoConfigController.保存mongodb配置",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "项目mongo_key",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "host",
+                        "description": "项目mongodb的域名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "port",
+                        "description": "项目mongodb的端口",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "user",
+                        "description": "项目mongodb的用户",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "password",
+                        "description": "项目mongodb的密码",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "dbname",
+                        "description": "项目mongodb的数据库名",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "{string} 添加成功"
+                    },
+                    "1": {
+                        "description": "{string} 添加失败"
+                    }
+                }
+            }
+        },
+        "/project/AddProject": {
+            "get": {
+                "tags": [
+                    "project"
+                ],
+                "description": "添加新的项目，并返回分配的mongo-key",
+                "operationId": "ProjectController.添加新的项目",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "ProjectName",
+                        "description": "项目名",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "{string} 添加成功"
+                    },
+                    "1": {
+                        "description": "{string} 添加失败"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "project",
+            "description": "项目相关接口\n"
+        },
+        {
+            "name": "mongodb",
+            "description": "mongoDB配置相关接口\n"
+        },
+        {
+            "name": "mongoC",
+            "description": "mongo文档新增操作相关接口\n"
+        },
+        {
+            "name": "mongoU",
+            "description": "mongo文档更新操作相关接口\n"
+        },
+        {
+            "name": "mongoR",
+            "description": "mongo文档读取操作相关接口\n"
+        },
+        {
+            "name": "mongoD",
+            "description": "mongo文档删除操作相关接口\n"
+        }
+    ]
+}
