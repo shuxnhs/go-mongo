@@ -1,0 +1,33 @@
+appname = go-mongodb
+httpport = 8080
+runmode = dev
+autorender = false
+copyrequestbody = true
+EnableDocs = true
+copyrequestbody = true
+EnableAdmin = true
+
+; 开发环境配置
+[dev]
+; mongodb配置
+mongoHost = 127.0.0.1
+mongoPort = 27017
+
+; mysql配置
+dbHost = 127.0.0.1
+dbPort = 3306
+dbUser = root
+dbPass =
+dbName = go-mongo
+
+; elasticsearch配置
+esHost = 127.0.0.1
+esPort = 9200
+
+; 测试环境配置
+[test]
+
+
+; 生产环境配置
+[prod]
+
