@@ -46,7 +46,7 @@ func (a *APIDataResponse) SetData(data interface{}) *APIDataResponse {
 // 顶层接口返回
 type APIResponse struct {
 	Ret  int         `json:"ret"`
-	Msg  interface{} `json:"msg"`
+	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`
 }
 
@@ -71,7 +71,7 @@ func (r *APIResponse) SetRet(ret int) *APIResponse {
 }
 
 // 设置（错误）提示信息 msg
-func (r *APIResponse) SetMsg(msg interface{}) *APIResponse {
+func (r *APIResponse) SetMsg(msg string) *APIResponse {
 	r.Msg = msg
 	return r
 }
