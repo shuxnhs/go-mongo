@@ -390,6 +390,147 @@
                 }
             }
         },
+        "/mongoU/MultiUpdateData": {
+            "post": {
+                "tags": [
+                    "mongoU"
+                ],
+                "description": "精确查找更新多份文档,{\"ret\": 200, \"msg\": \"\", \"data\": {\"code\": 0, \"msg\": \"更新成功\", \"data\": {\"MatchedCount\": 3, \"ModifiedCount\": 3, \"UpsertedCount\": 0, \"UpsertedID\": null}}}",
+                "operationId": "MongoUController.更新多份文档",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "mongoKey",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "collection",
+                        "description": "集合名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "filter",
+                        "description": "条件更新文档的条件,{name:hxh}",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "update",
+                        "description": "条件更新文档的数据,{name:hxh}",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "{string} 更新成功"
+                    },
+                    "1": {
+                        "description": "{string} 更新失败"
+                    }
+                }
+            }
+        },
+        "/mongoU/ReplaceOneData": {
+            "post": {
+                "tags": [
+                    "mongoU"
+                ],
+                "description": "精确查找替换一份文档，这是替换整一份文档，不是去更新某个域，{\"ret\": 200, \"msg\": \"\", \"data\": {\"code\": 0, \"msg\": \"替换成功\", \"data\": {\"MatchedCount\": 1, \"ModifiedCount\": 1, \"UpsertedCount\": 0, \"UpsertedID\": null}}}",
+                "operationId": "MongoUController.替换一份文档",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "mongoKey",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "collection",
+                        "description": "集合名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "filter",
+                        "description": "条件更新文档的条件,{name:hxh}",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "update",
+                        "description": "条件更新文档的数据,{name:hxh}",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "{string} 替换成功"
+                    },
+                    "1": {
+                        "description": "{string} 替换失败"
+                    }
+                }
+            }
+        },
+        "/mongoU/UpdateOneData": {
+            "post": {
+                "tags": [
+                    "mongoU"
+                ],
+                "description": "精确查找更新一个文档, {\"ret\": 200, \"msg\": \"\", \"data\": {\"code\": 0, \"msg\": \"更新成功\", \"data\": {\"MatchedCount\": 1, \"ModifiedCount\": 1, \"UpsertedCount\": 0, \"UpsertedID\": null}}}",
+                "operationId": "MongoUController.更新一份文档",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "mongoKey",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "collection",
+                        "description": "集合名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "filter",
+                        "description": "条件更新文档的条件，json传递，如{name:hxh}",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "update",
+                        "description": "条件更新文档的数据，json传递，如{name:hxh}",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "{string} 更新成功"
+                    },
+                    "1": {
+                        "description": "{string} 更新失败"
+                    }
+                }
+            }
+        },
         "/mongodb/AddMongoConfig": {
             "get": {
                 "tags": [
