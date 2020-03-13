@@ -1,7 +1,9 @@
 package models
 
 import (
+	"fmt"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/cache"
 	"github.com/astaxie/beego/orm"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	// 需要使用mysql驱动来初始化
@@ -10,6 +12,7 @@ import (
 )
 
 var clientOptions *options.ClientOptions
+var gcache cache.Cache
 
 func init() {
 
@@ -30,6 +33,13 @@ func init() {
 	} else {
 		utiLog.Log.Error("数据库连接失败: ", err)
 		beego.Info("数据库连接失败,失败原因：", err)
+	}
+
+	// 初始化缓存cache
+	cachePath := beego.AppConfig.String("fileCache")
+	gcache, err = cache.NewCache("file", `{"CachePath":"`+cachePath+`", "FileSuffix":".cache", "DirectoryLevel":"2", "EmbedExpiry":"3600"}`)
+	if err != nil {
+		utiLog.Log.Error("缓存初始化错误，err: ", fmt.Sprintf("%s", err))
 	}
 
 	// 初始化mongoClient
