@@ -18,6 +18,7 @@ func main() {
 		fmt.Println(err)
 	}
 	fmt.Println(res)
+	// {200  map[code:0 data:3 msg:获取成功]}
 
 	// post请求
 	document := make(map[string]string)
@@ -30,6 +31,6 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(res.Ret)
-
+	fmt.Println(res)
+	// {200  map[code:0 data:map[InsertedID:5e6bb4b9b811645b654eba72] msg:新增成功]}
 }

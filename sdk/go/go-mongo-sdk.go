@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -48,41 +46,26 @@ func (g *GoMongoSDK) Request(router string, service string, params map[string]st
 
 func (g *GoMongoSDK) httpRequest(url string, reqType string, params map[string]string) (APIResponse, error) {
 	apiResponse := &APIResponse{}
-	if strings.ToUpper(reqType) == "GET" {
-		if len(params) != 0 {
-			url += "?"
-			for key, value := range params {
-				url += key + "=" + value + "&"
-			}
+	if len(params) != 0 {
+		url += "?"
+		for key, value := range params {
+			url += key + "=" + value + "&"
 		}
-		resp, err := http.Get(url)
-		if err != nil {
-			return *apiResponse, err
-		}
-		defer func() {
-			_ = resp.Body.Close()
-		}()
-		bytes, _ := ioutil.ReadAll(resp.Body)
-		_ = json.Unmarshal(bytes, apiResponse)
-	} else {
-		client := &http.Client{}
-		jsonstr, err := json.Marshal(params)
-		buffer := bytes.NewBuffer(jsonstr)
-		fmt.Println(buffer)
-		req, err := http.NewRequest("POST", url, buffer)
-		if err != nil {
-			return *apiResponse, err
-		}
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-
-		resp, err := client.Do(req)
-
-		defer func() {
-			_ = resp.Body.Close()
-		}()
-
-		bytes, _ := ioutil.ReadAll(resp.Body)
-		_ = json.Unmarshal(bytes, apiResponse)
 	}
+	var resp *http.Response
+	var err error
+	if strings.ToUpper(reqType) == "GET" {
+		resp, err = http.Get(url)
+	} else {
+		resp, err = http.Post(url, "", nil)
+	}
+	if err != nil {
+		return *apiResponse, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bytes, _ := ioutil.ReadAll(resp.Body)
+	_ = json.Unmarshal(bytes, apiResponse)
 	return *apiResponse, nil
 }
