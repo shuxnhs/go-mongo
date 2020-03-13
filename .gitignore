@@ -4,3 +4,4 @@ cache
 go-mongo
 routers/commentsRouter_controllers.go
 lastupdate.tmp
+go-mongo.tar.gz
