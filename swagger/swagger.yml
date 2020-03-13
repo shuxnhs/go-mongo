@@ -67,6 +67,34 @@ paths:
           description: '{string} 添加成功，返回对象id的数组,InsertedID：_id'
         "1":
           description: '{string} 添加失败'
+  /mongoD/DeleteDataById:
+    get:
+      tags:
+      - mongoD
+      description: '根据对象精确查找删除一份文档，{"ret": 200, "msg": "", "data": {"code": 0, "msg":
+        "删除成功", "data": {"DeletedCount": 1}}}'
+      operationId: MongoDController.根据_id删除一份文档
+      parameters:
+      - in: query
+        name: mongoKey
+        description: mongoKey
+        required: true
+        type: string
+      - in: query
+        name: collection
+        description: 集合名
+        required: true
+        type: string
+      - in: query
+        name: objectId
+        description: 对象ID
+        required: true
+        type: string
+      responses:
+        "0":
+          description: '{string} 清空成功'
+        "1":
+          description: '{string} 清空失败错误信息'
   /mongoD/DeleteOneData:
     post:
       tags:
@@ -155,7 +183,7 @@ paths:
       - mongoR
       description: '通过条件，获取一条文档,{"ret": 200, "msg": "", "data": {"code": 0, "msg":
         "查询成功", "data": {"_id": "5da368b34a0bab8c655a8142", "age": 18, "name": "hxh"}}}'
-      operationId: MongoRController.自由获取文档
+      operationId: MongoRController.自由获取一份文档
       parameters:
       - in: query
         name: mongoKey
@@ -252,8 +280,10 @@ paths:
     get:
       tags:
       - mongoR
-      description: 获取collection指定文档
-      operationId: MongoRController.获取文档
+      description: '根据_id获取collection指定文档，{"ret": 200, "msg": "", "data": {"code":
+        0, "msg": "获取成功", "data": {"_id": "5da368b34a0bab8c655a8142", "age": "18",
+        "name": "hxh"}}}'
+      operationId: MongoRController.根据_id获取文档
       parameters:
       - in: query
         name: mongoKey
@@ -309,6 +339,40 @@ paths:
           description: '{string} 更新成功'
         "1":
           description: '{string} 更新失败'
+  /mongoU/ReplaceDataById:
+    post:
+      tags:
+      - mongoU
+      description: '根据对象ID精确查找替换一份文档，这是替换整一份文档，不是去更新某个域，{"ret": 200, "msg": "", "data":
+        {"code": 0, "msg": "替换成功", "data": {"MatchedCount": 1, "ModifiedCount": 1,
+        "UpsertedCount": 0, "UpsertedID": null}}}'
+      operationId: MongoUController.根据_id替换一份文档
+      parameters:
+      - in: query
+        name: mongoKey
+        description: mongoKey
+        required: true
+        type: string
+      - in: query
+        name: collection
+        description: 集合名
+        required: true
+        type: string
+      - in: query
+        name: objectId
+        description: 对象ID
+        required: true
+        type: string
+      - in: query
+        name: update
+        description: 条件更新文档的数据,{name:hxh}
+        required: true
+        type: string
+      responses:
+        "0":
+          description: '{string} 替换成功'
+        "1":
+          description: '{string} 替换失败'
   /mongoU/ReplaceOneData:
     post:
       tags:
@@ -343,6 +407,40 @@ paths:
           description: '{string} 替换成功'
         "1":
           description: '{string} 替换失败'
+  /mongoU/UpdateDataById:
+    post:
+      tags:
+      - mongoU
+      description: '根据_id更新文档,{"ret": 200, "msg": "", "data": {"code": 0, "msg": "更新成功",
+        "data": {"MatchedCount": 1, "ModifiedCount": 1, "UpsertedCount": 0, "UpsertedID":
+        null}}}'
+      operationId: MongoUController.根据_id更新文档
+      parameters:
+      - in: query
+        name: mongoKey
+        description: mongoKey
+        required: true
+        type: string
+      - in: query
+        name: collection
+        description: 集合名
+        required: true
+        type: string
+      - in: query
+        name: objectId
+        description: 对象ID
+        required: true
+        type: string
+      - in: query
+        name: update
+        description: 条件更新文档的数据，json传递，如{name:hxh}
+        required: true
+        type: string
+      responses:
+        "0":
+          description: '{string} 获取成功'
+        "1":
+          description: '{string} 获取失败错误信息'
   /mongoU/UpdateOneData:
     post:
       tags:

@@ -11,6 +11,36 @@ type MongoUController struct {
 	BaseController
 }
 
+// @Title 根据_id更新文档
+// @Description 根据_id更新文档,{"ret": 200, "msg": "", "data": {"code": 0, "msg": "更新成功", "data": {"MatchedCount": 1, "ModifiedCount": 1, "UpsertedCount": 0, "UpsertedID": null}}}
+// @Param	mongoKey		query 	string	true		"mongoKey"
+// @Param   collection		query	string  true		"集合名"
+// @Param   objectId		query	string   true		"对象ID"
+// @Param   update  		query	string  true		"条件更新文档的数据，json传递，如{"name":"hxh"}"
+// @Success 0 {string} 获取成功
+// @Failure 1 {string} 获取失败错误信息
+// @router /UpdateDataById [post]
+func (ctx *MongoUController) UpdateDataById() {
+	objectId := ctx.GetString("objectId")
+
+	update := ctx.GetString("update")
+	var updateData models.UpdateMap
+	err := json.Unmarshal([]byte(update), &updateData)
+	if err != nil {
+		ctx.ApiError(400, "update格式错误")
+	}
+
+	mp := ctx.ApiMongoProxy()
+	object, err := mp.UpdateDataById(objectId, updateData)
+
+	if err != nil {
+		ctx.ApiFailData(1, "更新失败"+fmt.Sprintf("%s", err), object)
+	}
+
+	ctx.ApiSuccessData("更新成功", object)
+
+}
+
 // @Title 更新一份文档
 // @Description 精确查找更新一个文档, {"ret": 200, "msg": "", "data": {"code": 0, "msg": "更新成功", "data": {"MatchedCount": 1, "ModifiedCount": 1, "UpsertedCount": 0, "UpsertedID": null}}}
 // @Param	mongoKey		query 	string	true		"mongoKey"
@@ -109,6 +139,34 @@ func (ctx *MongoUController) ReplaceOneData() {
 
 	if err != nil {
 		ctx.ApiFailData(1, "替换失败", result)
+	}
+
+	ctx.ApiSuccessData("替换成功", result)
+}
+
+// @Title 根据_id替换一份文档
+// @Description 根据对象ID精确查找替换一份文档，这是替换整一份文档，不是去更新某个域，{"ret": 200, "msg": "", "data": {"code": 0, "msg": "替换成功", "data": {"MatchedCount": 1, "ModifiedCount": 1, "UpsertedCount": 0, "UpsertedID": null}}}
+// @Param	mongoKey		query 	string	true		"mongoKey"
+// @Param   collection		query	string  true		"集合名"
+// @Param   objectId		query	string   true		"对象ID"
+// @Param   update  		query	string  true		"条件更新文档的数据,{"name":"hxh"}"
+// @Success 0 {string} 替换成功
+// @Failure 1 {string} 替换失败
+// @router /ReplaceDataById [post]
+func (ctx *MongoUController) ReplaceDataById() {
+	objectId := ctx.GetString("objectId")
+	update := ctx.GetString("update")
+	var updateData models.UpdateMap
+	err2 := json.Unmarshal([]byte(update), &updateData)
+	if err2 != nil {
+		ctx.ApiError(400, "update格式错误")
+	}
+
+	mp := ctx.ApiMongoProxy()
+	result, err := mp.ReplaceDataById(objectId, updateData)
+
+	if err != nil {
+		ctx.ApiFailData(1, "替换失败"+fmt.Sprintf("%s", err), result)
 	}
 
 	ctx.ApiSuccessData("替换成功", result)

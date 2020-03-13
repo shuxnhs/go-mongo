@@ -35,8 +35,8 @@ func (ctx *MongoRController) CountData() {
 	ctx.ApiSuccessData("获取成功", result)
 }
 
-// @Title 获取文档
-// @Description 获取collection指定文档
+// @Title 根据_id获取文档
+// @Description 根据_id获取collection指定文档，{"ret": 200, "msg": "", "data": {"code": 0, "msg": "获取成功", "data": {"_id": "5da368b34a0bab8c655a8142", "age": "18", "name": "hxh"}}}
 // @Param	mongoKey		query 	string	true		"mongoKey"
 // @Param   collection		query	string  true		"集合名"
 // @Param   objectId		query	string   true		"对象ID"
@@ -82,7 +82,7 @@ func (ctx *MongoRController) GetDataList() {
 	ctx.ApiSuccessData("查询成功", result)
 }
 
-// @Title 自由获取文档
+// @Title 自由获取一份文档
 // @Description 通过条件，获取一条文档,{"ret": 200, "msg": "", "data": {"code": 0, "msg": "查询成功", "data": {"_id": "5da368b34a0bab8c655a8142", "age": 18, "name": "hxh"}}}
 // @Param	mongoKey		query 	string	true		"mongoKey"
 // @Param   collection		query	string  true		"集合名"

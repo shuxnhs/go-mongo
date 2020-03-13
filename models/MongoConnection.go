@@ -5,6 +5,7 @@ import (
 	"fmt"
 	utiLog "go-mongo/common/log"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/url"
@@ -117,7 +118,11 @@ func (mc *MongoConnection) CountData(filter FilterMap) (int64, error) {
  */
 func (mc *MongoConnection) RetrieveObject(objectId string) (Document, error) {
 	var document Document
-	err := mc.CurCollection().FindOne(context.TODO(), bson.M{"_id": objectId}).Decode(&document)
+	id, err := primitive.ObjectIDFromHex(objectId)
+	if err != nil {
+		return document, err
+	}
+	err = mc.CurCollection().FindOne(context.TODO(), bson.M{"_id": id}).Decode(&document)
 	return document, err
 }
 
@@ -187,6 +192,22 @@ func (mc *MongoConnection) FreeGetDataList(projectionOpt ProjectionMap, filter F
 /**---------------------------更新文档操作-------------------------------**/
 
 /**
+ *@func: 根据_id更新数据
+ */
+func (mc *MongoConnection) UpdateDataById(objectId string, update UpdateMap) (*mongo.UpdateResult, error) {
+	id, err := primitive.ObjectIDFromHex(objectId)
+	if err != nil {
+		return &mongo.UpdateResult{
+			MatchedCount:  0,
+			ModifiedCount: 0,
+			UpsertedCount: 0,
+			UpsertedID:    nil,
+		}, err
+	}
+	return mc.CurCollection().UpdateOne(context.TODO(), bson.M{"_id": id}, bson.D{{"$set", update}})
+}
+
+/**
  *@func: 自由更新一条数据
  */
 func (mc *MongoConnection) UpdateOneData(filter FilterMap, update UpdateMap) (*mongo.UpdateResult, error) {
@@ -234,7 +255,34 @@ func (mc *MongoConnection) ReplaceOneData(filter FilterMap, update UpdateMap) (*
 	return mc.CurCollection().ReplaceOne(context.TODO(), filterData, update)
 }
 
+/**
+ *@func: 根据_id替换数据
+ */
+func (mc *MongoConnection) ReplaceDataById(objectId string, update UpdateMap) (*mongo.UpdateResult, error) {
+	id, err := primitive.ObjectIDFromHex(objectId)
+	if err != nil {
+		return &mongo.UpdateResult{
+			MatchedCount:  0,
+			ModifiedCount: 0,
+			UpsertedCount: 0,
+			UpsertedID:    nil,
+		}, err
+	}
+	return mc.CurCollection().ReplaceOne(context.TODO(), bson.M{"_id": id}, update)
+}
+
 /**---------------------------删除文档操作-------------------------------**/
+
+/**
+ * @func: 根据_id删除文档
+ */
+func (mc *MongoConnection) DeleteDataById(objectId string) (*mongo.DeleteResult, error) {
+	id, err := primitive.ObjectIDFromHex(objectId)
+	if err != nil {
+		return &mongo.DeleteResult{DeletedCount: int64(0)}, err
+	}
+	return mc.CurCollection().DeleteOne(context.TODO(), bson.M{"_id": id})
+}
 
 /**
  * @func: 删除文档
