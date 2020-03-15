@@ -1094,6 +1094,10 @@
         {
             "name": "mongoD",
             "description": "mongo文档删除操作相关接口\n"
+        },
+        {
+            "name": "mongoI",
+            "description": "mongo索引操作相关接口\n"
         }
     ]
 }

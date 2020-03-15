@@ -170,6 +170,8 @@ func (mc *MongoConnection) FreeGetDataList(projectionOpt ProjectionMap, filter F
 	findOptions := options.Find()
 	findOptions.SetProjection(projectionOpt)
 	findOptions.SetLimit(num)
+	// findOptions.SetSkip(1)   // 相当于offset
+	// findOptions.SetSort(bson.M{"createtime": -1}) // 1升序 -1降序
 
 	// Here's an array in which you can store the decoded documents
 	var results []*Document
