@@ -110,7 +110,7 @@ func (mc *MongoConnection) CloseMongo() error {
  * @func: 获取文档数量
  */
 func (mc *MongoConnection) CountData(filter FilterMap) (int64, error) {
-	return mc.CurCollection().CountDocuments(context.TODO(), filter)
+	return mc.CurCollection().CountDocuments(mc.getContext(), filter)
 }
 
 /**
@@ -122,7 +122,7 @@ func (mc *MongoConnection) RetrieveObject(objectId string) (Document, error) {
 	if err != nil {
 		return document, err
 	}
-	err = mc.CurCollection().FindOne(context.TODO(), bson.M{"_id": id}).Decode(&document)
+	err = mc.CurCollection().FindOne(mc.getContext(), bson.M{"_id": id}).Decode(&document)
 	return document, err
 }
 
@@ -138,7 +138,7 @@ func (mc *MongoConnection) GetDataList(num int64) ([]*Document, error) {
 	var results []*Document
 
 	// Passing bson.D{{}} as the filter matches all documents in the collection
-	cur, err := mc.CurCollection().Find(context.TODO(), bson.D{{}}, findOptions)
+	cur, err := mc.CurCollection().Find(mc.getContext(), bson.D{{}}, findOptions)
 
 	// Finding multiple documents returns a cursor
 	// Iterating through the cursor allows us to decode documents one at a time
@@ -158,7 +158,7 @@ func (mc *MongoConnection) GetDataList(num int64) ([]*Document, error) {
 func (mc *MongoConnection) FreeFindOne(filter FilterMap) (Document, error) {
 	filterData, _ := bson.Marshal(filter)
 	var document Document
-	err := mc.CurCollection().FindOne(context.TODO(), filterData).Decode(&document)
+	err := mc.CurCollection().FindOne(mc.getContext(), filterData).Decode(&document)
 	return document, err
 }
 
@@ -175,7 +175,7 @@ func (mc *MongoConnection) FreeGetDataList(projectionOpt ProjectionMap, filter F
 	var results []*Document
 
 	// Passing bson.D{{}} as the filter matches all documents in the collection
-	cur, err := mc.CurCollection().Find(context.TODO(), filter, findOptions)
+	cur, err := mc.CurCollection().Find(mc.getContext(), filter, findOptions)
 
 	// Finding multiple documents returns a cursor
 	// Iterating through the cursor allows us to decode documents one at a time
@@ -187,6 +187,31 @@ func (mc *MongoConnection) FreeGetDataList(projectionOpt ProjectionMap, filter F
 	// Close the cursor once finished
 	_ = cur.Close(context.TODO())
 	return results, err
+}
+
+/**
+ * @func：获取大于，等于，小于等条件的n条数据
+ */
+func (mc *MongoConnection) CondOperateFind(cond string, key string, value int64, num int64) ([]*Document, error) {
+	operate := mc.condOperateChange(cond)
+	findOptions := options.Find().SetLimit(num)
+	var results []*Document
+	cur, err := mc.CurCollection().Find(mc.getContext(), bson.M{key: bson.M{operate: value}}, findOptions)
+	defer cur.Close(mc.getContext())
+	for cur.Next(mc.getContext()) {
+		var elem Document
+		_ = cur.Decode(&elem)
+		results = append(results, &elem)
+	}
+	return results, err
+}
+
+/**
+ * @func: 条件操作符算有多少条数据
+ */
+func (mc *MongoConnection) CondOperateCount(cond string, key string, value int64) (int64, error) {
+	operate := mc.condOperateChange(cond)
+	return mc.CurCollection().CountDocuments(mc.getContext(), bson.M{key: bson.M{operate: value}})
 }
 
 /**---------------------------更新文档操作-------------------------------**/
@@ -204,7 +229,7 @@ func (mc *MongoConnection) UpdateDataById(objectId string, update UpdateMap) (*m
 			UpsertedID:    nil,
 		}, err
 	}
-	return mc.CurCollection().UpdateOne(context.TODO(), bson.M{"_id": id}, bson.D{{"$set", update}})
+	return mc.CurCollection().UpdateOne(mc.getContext(), bson.M{"_id": id}, bson.D{{"$set", update}})
 }
 
 /**
@@ -220,7 +245,7 @@ func (mc *MongoConnection) UpdateOneData(filter FilterMap, update UpdateMap) (*m
 			UpsertedID:    nil,
 		}, err
 	}
-	return mc.CurCollection().UpdateOne(context.TODO(), filterData, bson.D{{"$set", update}})
+	return mc.CurCollection().UpdateOne(mc.getContext(), filterData, bson.D{{"$set", update}})
 }
 
 /**
@@ -236,7 +261,7 @@ func (mc *MongoConnection) MultiUpdateData(filter FilterMap, update UpdateMap) (
 			UpsertedID:    nil,
 		}, err
 	}
-	return mc.CurCollection().UpdateMany(context.TODO(), filterData, bson.D{{"$set", update}})
+	return mc.CurCollection().UpdateMany(mc.getContext(), filterData, bson.D{{"$set", update}})
 }
 
 /**
@@ -252,7 +277,7 @@ func (mc *MongoConnection) ReplaceOneData(filter FilterMap, update UpdateMap) (*
 			UpsertedID:    nil,
 		}, err
 	}
-	return mc.CurCollection().ReplaceOne(context.TODO(), filterData, update)
+	return mc.CurCollection().ReplaceOne(mc.getContext(), filterData, update)
 }
 
 /**
@@ -268,7 +293,7 @@ func (mc *MongoConnection) ReplaceDataById(objectId string, update UpdateMap) (*
 			UpsertedID:    nil,
 		}, err
 	}
-	return mc.CurCollection().ReplaceOne(context.TODO(), bson.M{"_id": id}, update)
+	return mc.CurCollection().ReplaceOne(mc.getContext(), bson.M{"_id": id}, update)
 }
 
 /**---------------------------删除文档操作-------------------------------**/
@@ -281,7 +306,7 @@ func (mc *MongoConnection) DeleteDataById(objectId string) (*mongo.DeleteResult,
 	if err != nil {
 		return &mongo.DeleteResult{DeletedCount: int64(0)}, err
 	}
-	return mc.CurCollection().DeleteOne(context.TODO(), bson.M{"_id": id})
+	return mc.CurCollection().DeleteOne(mc.getContext(), bson.M{"_id": id})
 }
 
 /**
@@ -292,7 +317,7 @@ func (mc *MongoConnection) DeleteOneData(filter FilterMap) (*mongo.DeleteResult,
 	if err != nil {
 		return &mongo.DeleteResult{DeletedCount: int64(0)}, err
 	}
-	return mc.CurCollection().DeleteOne(context.TODO(), filterData)
+	return mc.CurCollection().DeleteOne(mc.getContext(), filterData)
 }
 
 /**
@@ -303,7 +328,7 @@ func (mc *MongoConnection) MultiDeleteData(filter FilterMap) (*mongo.DeleteResul
 	if err != nil {
 		return &mongo.DeleteResult{DeletedCount: int64(0)}, err
 	}
-	return mc.CurCollection().DeleteMany(context.TODO(), filterData)
+	return mc.CurCollection().DeleteMany(mc.getContext(), filterData)
 }
 
 /**---------------------------增加文档操作-------------------------------**/
@@ -312,12 +337,44 @@ func (mc *MongoConnection) MultiDeleteData(filter FilterMap) (*mongo.DeleteResul
  * @func: 插入新的文档
  */
 func (mc *MongoConnection) CreateObject(document Document) (*mongo.InsertOneResult, error) {
-	return mc.CurCollection().InsertOne(context.TODO(), document)
+	return mc.CurCollection().InsertOne(mc.getContext(), document)
 }
 
 /**
  * @func: 批量新增文档
  */
 func (mc *MongoConnection) MultiCreateData(documentList []interface{}) (*mongo.InsertManyResult, error) {
-	return mc.CurCollection().InsertMany(context.TODO(), documentList)
+	return mc.CurCollection().InsertMany(mc.getContext(), documentList)
+}
+
+/****---------------------------------辅助方法--------------------------------------****/
+
+/**
+ * @func: 条件运算符转换
+ */
+func (mc *MongoConnection) condOperateChange(cond string) string {
+	var operate string
+	switch cond {
+	case ">":
+		operate = "$gt"
+	case "<":
+		operate = "$lt"
+	case ">=":
+		operate = "$gte"
+	case "<=":
+		operate = "$lte"
+	case "!=":
+		operate = "$ne"
+	default:
+		operate = "$eq"
+	}
+	return operate
+}
+
+/**
+ * @func: context统一控制
+ */
+func (mc *MongoConnection) getContext() (ctx context.Context) {
+	ctx, _ = context.WithTimeout(context.Background(), 3*time.Second)
+	return ctx
 }

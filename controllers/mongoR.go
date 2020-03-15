@@ -35,6 +35,33 @@ func (ctx *MongoRController) CountData() {
 	ctx.ApiSuccessData("获取成功", result)
 }
 
+// @Title 条件运算获取文档的条数
+// @Description 根据条件运算符('=', '!=', '<', '>', '<=', '>=')自由获取文档的条数, 注意域的类型为数字型，返回：{ "ret": 200, "msg": "", "data": { "code": 0, "msg": "获取成功", "data": 4}}
+// @Param	mongoKey		query 	string	true		"mongoKey"
+// @Param   collection		query	string  true		"集合名"
+// @Param   cond  		    query	string  true		"查询条件：'=', '!=', '<', '>', '<=', '>=' "
+// @Param   key  		    query	string  true		"查询的域"
+// @Param   value  		    query	string  true		"条件查询的值"
+// @Success 0	 {string} 更新成功的文档数量
+// @Failure 1	 {string} 更新失败的错误信息
+// @router /CondCountData [get]
+func (ctx *MongoRController) CondCountData() {
+	cond := ctx.GetString("cond")
+	key := ctx.GetString("key")
+	value, err := ctx.GetInt64("value")
+	if err != nil {
+		ctx.ApiError(400, "value的值必须为int")
+	}
+
+	mp := ctx.ApiMongoProxy()
+	result, err := mp.CondOperateCount(cond, key, value)
+
+	if err != nil {
+		ctx.ApiFailData(1, "查询失败", result)
+	}
+	ctx.ApiSuccessData("获取成功", result)
+}
+
 // @Title 根据_id获取文档
 // @Description 根据_id获取collection指定文档，{"ret": 200, "msg": "", "data": {"code": 0, "msg": "获取成功", "data": {"_id": "5da368b34a0bab8c655a8142", "age": "18", "name": "hxh"}}}
 // @Param	mongoKey		query 	string	true		"mongoKey"
@@ -53,6 +80,44 @@ func (ctx *MongoRController) Retrieve() {
 		ctx.ApiFail(1, fmt.Sprintf("%s", err))
 	}
 	ctx.ApiSuccessData("获取成功", object)
+}
+
+// @Title 条件运算获取文档
+// @Description 根据条件运算符('=', '!=', '<', '>', '<=', '>=')自由获取文档, 注意域的类型为数字型，，{"ret": 200, "msg": "", "data": {"code": 0, "msg": "获取成功", "data": {"_id": "5da368b34a0bab8c655a8142", "age": "18", "name": "hxh"}}}
+// @Param	mongoKey		query 	string	true		"mongoKey"
+// @Param   collection		query	string  true		"集合名"
+// @Param   cond  		    query	string  true		"查询条件：'=', '!=', '<', '>', '<=', '>=' "
+// @Param   key  		    query	string  true		"查询的域"
+// @Param   value  		    query	string  true		"条件查询的值"
+// @Param   num				query	int64   false		"获取条数,默认为10"
+// @Success 0 {string} 获取成功
+// @Failure 1 {string} 集合文档为空
+// @Failure 2 {string} mongoDb其他查询错误
+// @router /CondOperateFind [get]
+func (ctx *MongoRController) CondOperateFind() {
+	cond := ctx.GetString("cond")
+	key := ctx.GetString("key")
+	value, err := ctx.GetInt64("value")
+	if err != nil {
+		ctx.ApiError(400, "value的值必须为int")
+	}
+
+	num, err1 := ctx.GetInt64("num")
+	if err1 != nil || num < 1 {
+		num = 10
+	}
+
+	mp := ctx.ApiMongoProxy()
+	result, err := mp.CondOperateFind(cond, key, value, num)
+
+	if err != nil {
+		ctx.ApiFailData(2, fmt.Sprintf("%s", err), result)
+	}
+
+	if len(result) == 0 {
+		ctx.ApiFail(1, "集合文档为空")
+	}
+	ctx.ApiSuccessData("查询成功", result)
 }
 
 // @Title 获取n份文档

@@ -151,6 +151,91 @@ paths:
           description: '{string} 清空成功'
         "1":
           description: '{string} 清空失败错误信息'
+  /mongoR/CondCountData:
+    get:
+      tags:
+      - mongoR
+      description: '根据条件运算符(''='', ''!='', ''<'', ''>'', ''<='', ''>='')自由获取文档的条数,
+        注意域的类型为数字型，返回：{ "ret": 200, "msg": "", "data": { "code": 0, "msg": "获取成功",
+        "data": 4}}'
+      operationId: MongoRController.条件运算获取文档的条数
+      parameters:
+      - in: query
+        name: mongoKey
+        description: mongoKey
+        required: true
+        type: string
+      - in: query
+        name: collection
+        description: 集合名
+        required: true
+        type: string
+      - in: query
+        name: cond
+        description: 查询条件：'=', '!=', '<', '>', '<=', '>='
+        required: true
+        type: string
+      - in: query
+        name: key
+        description: 查询的域
+        required: true
+        type: string
+      - in: query
+        name: value
+        description: 条件查询的值
+        required: true
+        type: string
+      responses:
+        "0":
+          description: '{string} 更新成功的文档数量'
+        "1":
+          description: '{string} 更新失败的错误信息'
+  /mongoR/CondOperateFind:
+    get:
+      tags:
+      - mongoR
+      description: '根据条件运算符(''='', ''!='', ''<'', ''>'', ''<='', ''>='')自由获取文档, 注意域的类型为数字型，，{"ret":
+        200, "msg": "", "data": {"code": 0, "msg": "获取成功", "data": {"_id": "5da368b34a0bab8c655a8142",
+        "age": "18", "name": "hxh"}}}'
+      operationId: MongoRController.条件运算获取文档
+      parameters:
+      - in: query
+        name: mongoKey
+        description: mongoKey
+        required: true
+        type: string
+      - in: query
+        name: collection
+        description: 集合名
+        required: true
+        type: string
+      - in: query
+        name: cond
+        description: 查询条件：'=', '!=', '<', '>', '<=', '>='
+        required: true
+        type: string
+      - in: query
+        name: key
+        description: 查询的域
+        required: true
+        type: string
+      - in: query
+        name: value
+        description: 条件查询的值
+        required: true
+        type: string
+      - in: query
+        name: num
+        description: 获取条数,默认为10
+        type: integer
+        format: int64
+      responses:
+        "0":
+          description: '{string} 获取成功'
+        "1":
+          description: '{string} 集合文档为空'
+        "2":
+          description: '{string} mongoDb其他查询错误'
   /mongoR/CountData:
     get:
       tags:
