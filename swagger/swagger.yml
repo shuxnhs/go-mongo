@@ -184,7 +184,8 @@ paths:
         name: value
         description: 条件查询的值
         required: true
-        type: string
+        type: integer
+        format: int64
       responses:
         "0":
           description: '{string} 更新成功的文档数量'
@@ -223,7 +224,8 @@ paths:
         name: value
         description: 条件查询的值
         required: true
-        type: string
+        type: integer
+        format: int64
       - in: query
         name: num
         description: 获取条数,默认为10
@@ -390,6 +392,47 @@ paths:
           description: '{string} 获取成功'
         "1":
           description: '{string} 获取失败错误信息'
+  /mongoR/TypeOperateFind:
+    get:
+      tags:
+      - mongoR
+      description: '根据域的类型自由获取文档，{"ret": 200, "msg": "", "data": {"code": 0, "msg":
+        "获取成功", "data": {"_id": "5da368b34a0bab8c655a8142", "age": "18", "name": "hxh"}}}（age的type为2=>string）'
+      operationId: MongoRController.type运算获取文档
+      parameters:
+      - in: query
+        name: mongoKey
+        description: mongoKey
+        required: true
+        type: string
+      - in: query
+        name: collection
+        description: 集合名
+        required: true
+        type: string
+      - in: query
+        name: typeKey
+        description: type类型, 参考：https://www.runoob.com/mongodb/mongodb-operators-type.html
+        required: true
+        type: integer
+        format: int32
+      - in: query
+        name: key
+        description: 查询的域
+        required: true
+        type: string
+      - in: query
+        name: num
+        description: 获取条数,默认为10
+        type: integer
+        format: int64
+      responses:
+        "0":
+          description: '{string} 获取成功'
+        "1":
+          description: '{string} 集合文档为空'
+        "2":
+          description: '{string} mongoDb其他查询错误'
   /mongoU/MultiUpdateData:
     post:
       tags:

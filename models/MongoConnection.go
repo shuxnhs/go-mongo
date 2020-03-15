@@ -214,6 +214,41 @@ func (mc *MongoConnection) CondOperateCount(cond string, key string, value int64
 	return mc.CurCollection().CountDocuments(mc.getContext(), bson.M{key: bson.M{operate: value}})
 }
 
+/**
+ * @func：获取字段类型的条件的n条数据
+ * Double =>    1
+ * String =>	2
+ * Object => 	3
+ * Array  =>	4
+ * Binary data	 =>   5
+ * Undefined	 =>   6	 已废弃。
+ * Object id	 =>   7
+ * Boolean	     =>   8
+ * Date	  =>  9
+ * Null	  =>  10
+ * Regular Expression   =>	11
+ * JavaScript	        =>  13
+ * Symbol	            =>  14
+ * JavaScript (with scope)	 =>   15
+ * 32-bit integer	    =>   16
+ * Timestamp			=>   17
+ * 64-bit integer	    =>   18
+ * Min key	  255	Query with -1.
+ * Max key	  127
+ */
+func (mc *MongoConnection) TypeOperateFind(typeKey int8, key string, num int64) ([]*Document, error) {
+	findOptions := options.Find().SetLimit(num)
+	var results []*Document
+	cur, err := mc.CurCollection().Find(mc.getContext(), bson.M{key: bson.M{"$type": typeKey}}, findOptions)
+	defer cur.Close(mc.getContext())
+	for cur.Next(mc.getContext()) {
+		var elem Document
+		_ = cur.Decode(&elem)
+		results = append(results, &elem)
+	}
+	return results, err
+}
+
 /**---------------------------更新文档操作-------------------------------**/
 
 /**

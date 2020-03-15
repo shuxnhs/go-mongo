@@ -41,7 +41,7 @@ func (ctx *MongoRController) CountData() {
 // @Param   collection		query	string  true		"集合名"
 // @Param   cond  		    query	string  true		"查询条件：'=', '!=', '<', '>', '<=', '>=' "
 // @Param   key  		    query	string  true		"查询的域"
-// @Param   value  		    query	string  true		"条件查询的值"
+// @Param   value  		    query	int64   true		"条件查询的值"
 // @Success 0	 {string} 更新成功的文档数量
 // @Failure 1	 {string} 更新失败的错误信息
 // @router /CondCountData [get]
@@ -88,7 +88,7 @@ func (ctx *MongoRController) Retrieve() {
 // @Param   collection		query	string  true		"集合名"
 // @Param   cond  		    query	string  true		"查询条件：'=', '!=', '<', '>', '<=', '>=' "
 // @Param   key  		    query	string  true		"查询的域"
-// @Param   value  		    query	string  true		"条件查询的值"
+// @Param   value  		    query	int64   true		"条件查询的值"
 // @Param   num				query	int64   false		"获取条数,默认为10"
 // @Success 0 {string} 获取成功
 // @Failure 1 {string} 集合文档为空
@@ -109,6 +109,43 @@ func (ctx *MongoRController) CondOperateFind() {
 
 	mp := ctx.ApiMongoProxy()
 	result, err := mp.CondOperateFind(cond, key, value, num)
+
+	if err != nil {
+		ctx.ApiFailData(2, fmt.Sprintf("%s", err), result)
+	}
+
+	if len(result) == 0 {
+		ctx.ApiFail(1, "集合文档为空")
+	}
+	ctx.ApiSuccessData("查询成功", result)
+}
+
+// @Title type运算获取文档
+// @Description 根据域的类型自由获取文档，{"ret": 200, "msg": "", "data": {"code": 0, "msg": "获取成功", "data": {"_id": "5da368b34a0bab8c655a8142", "age": "18", "name": "hxh"}}}（age的type为2=>string）
+// @Param	mongoKey		query 	string	true		"mongoKey"
+// @Param   collection		query	string  true		"集合名"
+// @Param   typeKey  		query	int8    true		"type类型, 参考：https://www.runoob.com/mongodb/mongodb-operators-type.html"
+// @Param   key  		    query	string  true		"查询的域"
+// @Param   num				query	int64   false		"获取条数,默认为10"
+// @Success 0 {string} 获取成功
+// @Failure 1 {string} 集合文档为空
+// @Failure 2 {string} mongoDb其他查询错误
+// @router /TypeOperateFind [get]
+func (ctx *MongoRController) TypeOperateFind() {
+	key := ctx.GetString("key")
+
+	typeKey, err := ctx.GetInt8("typeKey")
+	if err != nil {
+		ctx.ApiError(400, "typeKey参数有误")
+	}
+
+	num, err1 := ctx.GetInt64("num")
+	if err1 != nil || num < 1 {
+		num = 10
+	}
+
+	mp := ctx.ApiMongoProxy()
+	result, err := mp.TypeOperateFind(typeKey, key, num)
 
 	if err != nil {
 		ctx.ApiFailData(2, fmt.Sprintf("%s", err), result)
