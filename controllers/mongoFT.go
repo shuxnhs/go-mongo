@@ -35,7 +35,7 @@ func (ctx *MongoFTController) FullTextSearch() {
 	ctx.ApiSuccessData("查询成功", result)
 }
 
-// @Title 创建全文接口
+// @Title 创建全文索引接口
 // @Description 创建全文索引,{"ret": 200, "msg": "", "data": {"code": 0, "msg": "创建成功", "data": "1"}}
 // @Param	mongoKey		query 	string	 true		"mongoKey"
 // @Param   collection		query	string   true		"集合名"

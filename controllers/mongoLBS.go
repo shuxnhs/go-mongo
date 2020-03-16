@@ -55,3 +55,24 @@ func (ctx *MongoLBSController) GetNearAndDistance() {
 }
 
 // 新增的文档：{"account" : "1", "platform" : "android", "location" : {"type" : "Point", "coordinates" : [108.840974298098, 34.2789316522934]}, "collectTime" : 1480602671, "logTime" : 1480602675}
+
+// @Title 创建2DSphere索引接口
+// @Description 建2DSphere索引,注意索引的key是Geojson类型{"type" : "Point", "coordinates" : [108.8098, 34.2789]}  {"ret": 200, "msg": "", "data": {"code": 0, "msg": "创建成功", "data": "1"}}
+// @Param	mongoKey		query 	string	 true		"mongoKey"
+// @Param   collection		query	string   true		"集合名"
+// @Param   key     		query	string   true		"创建的索引字段"
+// @Param   indexName		query	string   true		"索引名称"
+// @router /Create2DSphereIndex [get]
+func (ctx *MongoLBSController) Create2DSphereIndex() {
+	key := ctx.GetString("key")
+	indexName := ctx.GetString("indexName")
+
+	mp := ctx.ApiMongoProxy()
+	result, err := mp.Create2DSphereIndex(key, indexName)
+
+	if err != nil {
+		ctx.ApiFailData(2, fmt.Sprintf("%s", err), result)
+	}
+
+	ctx.ApiSuccessData("创建成功", result)
+}

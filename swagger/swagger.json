@@ -221,7 +221,7 @@
                     "mongoFT"
                 ],
                 "description": "创建全文索引,{\"ret\": 200, \"msg\": \"\", \"data\": {\"code\": 0, \"msg\": \"创建成功\", \"data\": \"1\"}}",
-                "operationId": "MongoFTController.创建全文接口",
+                "operationId": "MongoFTController.创建全文索引接口",
                 "parameters": [
                     {
                         "in": "query",
@@ -289,6 +289,45 @@
                         "description": "获取条数",
                         "type": "integer",
                         "format": "int64"
+                    }
+                ]
+            }
+        },
+        "/mongoLBS/Create2DSphereIndex": {
+            "get": {
+                "tags": [
+                    "mongoLBS"
+                ],
+                "description": "建2DSphere索引,注意索引的key是Geojson类型{\"type\" : \"Point\", \"coordinates\" : [108.8098, 34.2789]}  {\"ret\": 200, \"msg\": \"\", \"data\": {\"code\": 0, \"msg\": \"创建成功\", \"data\": \"1\"}}",
+                "operationId": "MongoLBSController.创建2DSphere索引接口",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "mongoKey",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "collection",
+                        "description": "集合名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "key",
+                        "description": "创建的索引字段",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "indexName",
+                        "description": "索引名称",
+                        "required": true,
+                        "type": "string"
                     }
                 ]
             }

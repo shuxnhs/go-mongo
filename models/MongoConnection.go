@@ -498,6 +498,30 @@ func (mc *MongoConnection) FindNearLBS(lon float64, lat float64, maxDistance int
 	return results, err
 }
 
+/**
+ * @func: 创建2dsphere索引
+ */
+func (mc *MongoConnection) Create2DSphereIndex(key string, indexName string) (string, error) {
+
+	opts := options.CreateIndexes().SetMaxTime(10 * time.Second)
+	indexView := mc.CurCollection().Indexes()
+	keysDoc := bsonx.Doc{}.Append(key, bsonx.String("2dsphere"))
+
+	index := options.Index().
+		SetBackground(true).
+		SetName(indexName)
+
+	// 创建索引
+	return indexView.CreateOne(
+		mc.getContext(),
+		mongo.IndexModel{
+			Keys:    keysDoc,
+			Options: index,
+		},
+		opts,
+	)
+}
+
 /**--------------------------- 全文搜索模块操作 -------------------------------**/
 
 /**
@@ -520,6 +544,9 @@ func (mc *MongoConnection) FullTextFind(text string, num int64) ([]*Document, er
 	return results, err
 }
 
+/**
+ * @func: 创建全文索引
+ */
 func (mc *MongoConnection) CreateFullTextIndex(key string, indexName string) (string, error) {
 
 	opts := options.CreateIndexes().SetMaxTime(10 * time.Second)
