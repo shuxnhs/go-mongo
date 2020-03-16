@@ -54,6 +54,11 @@ func init() {
 				&controllers.MongoLBSController{},
 			),
 		),
+		beego.NSNamespace("/mongoFT",
+			beego.NSInclude(
+				&controllers.MongoFTController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

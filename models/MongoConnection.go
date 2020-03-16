@@ -449,63 +449,20 @@ func (mc *MongoConnection) CreateIndex(name string, isBackground bool, isUnique 
 }
 
 /**--------------------------- LBS模块操作 -------------------------------**/
-func (mc *MongoConnection) FindNearLBS2(key string, geo string, minDistance int64, maxDistance int64, num int64) ([]*Document, error) {
-	findOptions := options.Find().SetLimit(num)
-	var results []*Document
-	//{ < location  field >： {
-	//     $near ： {  $geometry ： { 类型： “点”  ， 坐标：[  < 经度>  ， < 纬度>  ] } }，
-	//     $maxDistance ： < 以米为单位的距离 > ，
-	//     $minDistance ：< 以米为单位的距离>
-	//      }
-	//     }
-	options.RunCmd()
-	geoData := bsonx.DBPointer(geo, primitive.NewObjectID())
-
-	//db.lbs.find({
-	//location: {
-	//	$nearSphere: {
-	//	$geometry: { type: "Point", coordinates: [ 108, 34 ] },
-	//  $maxDistance: 5000000 }
-	//}
-	//})
-
-	//cur, err := mc.CurCollection().Find(mc.getContext(), bson.M{
-	//		"location" : bson.M{
-	//			"$nearSphere" : bson.D{
-	//				{"$geometry", location},
-	//				{"$maxDistance" , 5000000},
-	//			},
-	//		},
-	//})
-	cur, err := mc.CurCollection().Find(mc.getContext(), bson.D{{
-		key,
-		bson.D{
-			{"$near", bson.D{{"$geometry", geoData}}},
-			{"$maxDistance", maxDistance},
-			{"$minDistance", minDistance},
-		},
-	}}, findOptions)
-	defer cur.Close(mc.getContext())
-	for cur.Next(mc.getContext()) {
-		var elem Document
-		_ = cur.Decode(&elem)
-		results = append(results, &elem)
-	}
-	return results, err
-}
 
 /**
  * @func：计算x米内的的地点及距离
  * @param lon 经度
  * @param lat 纬度
  * @param maxDistance 最大距离
+ * @param minDistance 最小距离
  */
-func (mc *MongoConnection) FindNearLBS(lon float64, lat float64, maxDistance int64, num int64) ([]*Document, error) {
+func (mc *MongoConnection) FindNearLBS(lon float64, lat float64, maxDistance int64, minDistance int64, num int64) ([]*Document, error) {
 	var results []*Document
 
 	//db.lbs.aggregate({
-	//	$geoNear:{[115.999567,28.681813]
-	//       near: , // 当前坐标
+	//	$geoNear:{
+	//       near: [115.999567,28.681813], // 当前坐标
 	//       spherical: true, // 计算球面距离
 	//       distanceMultiplier: 6378137, // 地球半径,单位是米,那么的除的记录也是米
 	//       maxDistance: 2000000/6378137, // 过滤条件2000米内，需要弧度
@@ -520,6 +477,7 @@ func (mc *MongoConnection) FindNearLBS(lon float64, lat float64, maxDistance int
 				"spherical":          true,
 				"distanceMultiplier": 6378137,
 				"maxDistance":        maxDistance / 6378137,
+				"minDistance":        minDistance / 6378137,
 				"distanceField":      "distance",
 			},
 		},
@@ -528,6 +486,28 @@ func (mc *MongoConnection) FindNearLBS(lon float64, lat float64, maxDistance int
 		},
 	})
 
+	if err != nil {
+		return results, err
+	}
+	defer cur.Close(mc.getContext())
+	for cur.Next(mc.getContext()) {
+		var elem Document
+		_ = cur.Decode(&elem)
+		results = append(results, &elem)
+	}
+	return results, err
+}
+
+/**--------------------------- 全文搜索模块操作 -------------------------------**/
+
+/**
+ * @func：全文搜索
+ * db.docs.find({$text:{$search:"hxh"}})
+ */
+func (mc *MongoConnection) FullTextFind(text string, num int64) ([]*Document, error) {
+	findOptions := options.Find().SetLimit(num)
+	var results []*Document
+	cur, err := mc.CurCollection().Find(mc.getContext(), bson.M{"$text": bson.M{"$search": text}}, findOptions)
 	if err != nil {
 		return results, err
 	}

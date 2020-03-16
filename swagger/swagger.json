@@ -215,13 +215,52 @@
                 }
             }
         },
+        "/mongoFT/FullTextSearch": {
+            "get": {
+                "tags": [
+                    "mongoFT"
+                ],
+                "description": "根据关键字全文搜索，注意集合必须先创建好索引，注意mongodb版本支持的语言,{\"ret\": 200, \"msg\": \"\", \"data\": {\"code\": 0, \"msg\": \"查询成功\", \"data\": [{\"_id\": \"5e6e4617291c5d88fed24286\", \"age\": 21, \"name\": \"hxh\"},{\"_id\": \"5da368b34a0bab8c655a8142\", \"age\": 1, \"name\": \"hxh is a boy\"}]}}(text=hxh)",
+                "operationId": "MongoFTController.全文搜索接口",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "mongoKey",
+                        "description": "mongoKey",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "collection",
+                        "description": "集合名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "text",
+                        "description": "搜索关键词",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "num",
+                        "description": "获取条数",
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ]
+            }
+        },
         "/mongoLBS/GetNearAndDistance": {
             "get": {
                 "tags": [
                     "mongoLBS"
                 ],
-                "description": "查询最近的地点，注意集合必须先创建好索引2DSphere，返回的distance为坐标的距离，{\"ret\": 200, \"msg\": \"\", \"data\": {\"code\": 0, \"msg\": \"查询成功\", \"data\": [{\"_id\": \"5e6f236a436ec50abd7457d4\", \"account\": \"1\", \"collectTime\": 1480602671, \"distance\": 902576.4266556037, \"location\": {\"coordinates\": [107.840974298098, 33.2789316522934], \"type\": \"Point\"}, \"logTime\": 1480602675, \"platform\": \"android\"}]}}",
-                "operationId": "MongoLBSController.查询最近的地点",
+                "description": "查询最近到远的地点，注意集合必须先创建好索引2DSphere，返回的distance为坐标的距离，{\"ret\": 200, \"msg\": \"\", \"data\": {\"code\": 0, \"msg\": \"查询成功\", \"data\": [{\"_id\": \"5e6f236a436ec50abd7457d4\", \"account\": \"1\", \"collectTime\": 1480602671, \"distance\": 902576.4266556037, \"location\": {\"coordinates\": [107.840974298098, 33.2789316522934], \"type\": \"Point\"}, \"logTime\": 1480602675, \"platform\": \"android\"}]}}",
+                "operationId": "MongoLBSController.查询从近到远的地点",
                 "parameters": [
                     {
                         "in": "query",
@@ -258,7 +297,15 @@
                     {
                         "in": "query",
                         "name": "maxDistance",
-                        "description": "查询多少距离内的，单位为米，默认10000米",
+                        "description": "查询多少距离内的，单位为米，默认1000000米",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "minDistance",
+                        "description": "查询最小多少距离外的，单位为米，默认1000米",
                         "required": true,
                         "type": "integer",
                         "format": "int64"
@@ -1167,6 +1214,10 @@
         {
             "name": "mongoLBS",
             "description": "mongoLBS操作相关接口-\u003e（附近的人）\n"
+        },
+        {
+            "name": "mongoFT",
+            "description": "mongo全文搜索相关操作\n"
         }
     ]
 }
