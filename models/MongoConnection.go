@@ -8,7 +8,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/x/bsonx"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -171,7 +173,7 @@ func (mc *MongoConnection) FreeGetDataList(projectionOpt ProjectionMap, filter F
 	findOptions.SetProjection(projectionOpt)
 	findOptions.SetLimit(num)
 	// findOptions.SetSkip(1)   // 相当于offset
-	// findOptions.SetSort(bson.M{"createtime": -1}) // 1升序 -1降序
+	// 	findOptions.SetSort(bson.M{"createtime": -1}) // 1升序 -1降序
 
 	// Here's an array in which you can store the decoded documents
 	var results []*Document
@@ -382,6 +384,54 @@ func (mc *MongoConnection) CreateObject(document Document) (*mongo.InsertOneResu
  */
 func (mc *MongoConnection) MultiCreateData(documentList []interface{}) (*mongo.InsertManyResult, error) {
 	return mc.CurCollection().InsertMany(mc.getContext(), documentList)
+}
+
+/**--------------------------- 索引操作 -------------------------------**/
+
+/**
+ * @func：新增索引
+ * @param: mame 索引名称
+ * @param: isBackground 是否后台创建
+ * @param: isUnique 是否唯一索引
+ * @param: weight  权重
+ * @param: isSetSparse 对文档中不存在的字段数据是否启用索引
+ * @param: keys 字段，如果你想按降序来创建索引指定为 -keys
+ */
+func (mc *MongoConnection) CreateIndex(name string, isBackground bool, isUnique bool, weight int,
+	isSetSparse bool, keys ...string) (string, error) {
+	opts := options.CreateIndexes().SetMaxTime(10 * time.Second)
+	indexView := mc.CurCollection().Indexes()
+	keysDoc := bsonx.Doc{}
+
+	// 复合索引
+	for _, key := range keys {
+		if strings.HasPrefix(key, "-") {
+			keysDoc = keysDoc.Append(strings.TrimLeft(key, "-"), bsonx.Int32(-1))
+		} else {
+			keysDoc = keysDoc.Append(key, bsonx.Int32(1))
+		}
+	}
+
+	index := options.Index().
+		SetBackground(isBackground). // 是否后台创建
+		SetName(name).               // 索引的名称。如果未指定，MongoDB的通过连接索引的字段名和排序顺序生成一个索引名称。
+		SetUnique(isUnique).         // 是否唯一索引
+		SetWeights(weight).          // 索引权重值，数值在 1 到 99,999 之间，表示该索引相对于其他索引字段的得分权重。
+		SetExpireAfterSeconds(0).    // 指定一个以秒为单位的数值，完成 TTL设定，设定集合的生存时间
+		SetVersion(1).               // 索引的版本号。默认的索引版本取决于mongod创建索引时运行的版本。
+		SetSparse(isSetSparse)       // 对文档中不存在的字段数据不启用索引
+		//SetDefaultLanguage("english").  // 对于文本索引，该参数决定了停用词及词干和词器的规则的列表。 默认为英语
+		//SetLanguageOverride("english")   // 对于文本索引，该参数指定了包含在文档中的字段名，语言覆盖默认的language，默认值为 language.
+
+	// 创建索引
+	return indexView.CreateOne(
+		mc.getContext(),
+		mongo.IndexModel{
+			Keys:    keysDoc,
+			Options: index,
+		},
+		opts,
+	)
 }
 
 /****---------------------------------辅助方法--------------------------------------****/
