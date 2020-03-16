@@ -151,6 +151,51 @@ paths:
           description: '{string} 清空成功'
         "1":
           description: '{string} 清空失败错误信息'
+  /mongoLBS/GetNearAndDistance:
+    get:
+      tags:
+      - mongoLBS
+      description: '查询最近的地点，注意集合必须先创建好索引2DSphere，返回的distance为坐标的距离，{"ret": 200, "msg":
+        "", "data": {"code": 0, "msg": "查询成功", "data": [{"_id": "5e6f236a436ec50abd7457d4",
+        "account": "1", "collectTime": 1480602671, "distance": 902576.4266556037,
+        "location": {"coordinates": [107.840974298098, 33.2789316522934], "type":
+        "Point"}, "logTime": 1480602675, "platform": "android"}]}}'
+      operationId: MongoLBSController.查询最近的地点
+      parameters:
+      - in: query
+        name: mongoKey
+        description: mongoKey
+        required: true
+        type: string
+      - in: query
+        name: collection
+        description: 集合名
+        required: true
+        type: string
+      - in: query
+        name: lon
+        description: 查询的经度
+        required: true
+        schema:
+          $ref: '#/definitions/float'
+      - in: query
+        name: lat
+        description: 查询的纬度
+        required: true
+        schema:
+          $ref: '#/definitions/float'
+      - in: query
+        name: maxDistance
+        description: 查询多少距离内的，单位为米，默认10000米
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: num
+        description: 获取条数
+        required: true
+        type: integer
+        format: int64
   /mongoR/CondCountData:
     get:
       tags:
@@ -755,6 +800,10 @@ paths:
           description: '{string} 添加成功'
         "1":
           description: '{string} 添加失败'
+definitions:
+  float:
+    title: float
+    type: object
 tags:
 - name: project
   description: |
@@ -777,3 +826,6 @@ tags:
 - name: mongoI
   description: |
     mongo索引操作相关接口
+- name: mongoLBS
+  description: |
+    mongoLBS操作相关接口->（附近的人）
