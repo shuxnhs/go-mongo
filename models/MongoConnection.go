@@ -520,6 +520,27 @@ func (mc *MongoConnection) FullTextFind(text string, num int64) ([]*Document, er
 	return results, err
 }
 
+func (mc *MongoConnection) CreateFullTextIndex(key string, indexName string) (string, error) {
+
+	opts := options.CreateIndexes().SetMaxTime(10 * time.Second)
+	indexView := mc.CurCollection().Indexes()
+	keysDoc := bsonx.Doc{}.Append(key, bsonx.String("text"))
+
+	index := options.Index().
+		SetBackground(true).
+		SetName(indexName)
+
+	// 创建索引
+	return indexView.CreateOne(
+		mc.getContext(),
+		mongo.IndexModel{
+			Keys:    keysDoc,
+			Options: index,
+		},
+		opts,
+	)
+}
+
 /****---------------------------------辅助方法--------------------------------------****/
 
 /**

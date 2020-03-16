@@ -34,3 +34,24 @@ func (ctx *MongoFTController) FullTextSearch() {
 	}
 	ctx.ApiSuccessData("查询成功", result)
 }
+
+// @Title 创建全文接口
+// @Description 创建全文索引
+// @Param	mongoKey		query 	string	 true		"mongoKey"
+// @Param   collection		query	string   true		"集合名"
+// @Param   key     		query	string   true		"创建的索引字段"
+// @Param   indexName		query	string   true		"索引名称"
+// @router /CreateFullText [get]
+func (ctx *MongoFTController) CreateFullText() {
+	key := ctx.GetString("key")
+	indexName := ctx.GetString("indexName")
+
+	mp := ctx.ApiMongoProxy()
+	result, err := mp.CreateFullTextIndex(key, indexName)
+
+	if err != nil {
+		ctx.ApiFailData(2, fmt.Sprintf("%s", err), result)
+	}
+
+	ctx.ApiSuccessData("创建成功", result)
+}

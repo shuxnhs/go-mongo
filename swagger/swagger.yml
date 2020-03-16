@@ -151,6 +151,33 @@ paths:
           description: '{string} 清空成功'
         "1":
           description: '{string} 清空失败错误信息'
+  /mongoFT/CreateFullText:
+    get:
+      tags:
+      - mongoFT
+      description: 创建全文索引
+      operationId: MongoFTController.创建全文接口
+      parameters:
+      - in: query
+        name: mongoKey
+        description: mongoKey
+        required: true
+        type: string
+      - in: query
+        name: collection
+        description: 集合名
+        required: true
+        type: string
+      - in: query
+        name: key
+        description: 创建的索引字段
+        required: true
+        type: string
+      - in: query
+        name: indexName
+        description: 索引名称
+        required: true
+        type: string
   /mongoFT/FullTextSearch:
     get:
       tags:
