@@ -36,7 +36,7 @@ func (ctx *MongoFTController) FullTextSearch() {
 }
 
 // @Title 创建全文接口
-// @Description 创建全文索引
+// @Description 创建全文索引,{"ret": 200, "msg": "", "data": {"code": 0, "msg": "创建成功", "data": "1"}}
 // @Param	mongoKey		query 	string	 true		"mongoKey"
 // @Param   collection		query	string   true		"集合名"
 // @Param   key     		query	string   true		"创建的索引字段"

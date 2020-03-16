@@ -220,7 +220,7 @@
                 "tags": [
                     "mongoFT"
                 ],
-                "description": "创建全文索引",
+                "description": "创建全文索引,{\"ret\": 200, \"msg\": \"\", \"data\": {\"code\": 0, \"msg\": \"创建成功\", \"data\": \"1\"}}",
                 "operationId": "MongoFTController.创建全文接口",
                 "parameters": [
                     {
