@@ -1,14 +1,11 @@
 swagger: "2.0"
 info:
-  title: beego Test API
-  description: beego has a very cool tools to autogenerate documents for your API
+  title: Go-Mongo
+  description: go的mongodb中间件，为项目提供mongodb的API
   version: 1.0.0
   termsOfService: http://beego.me/
   contact:
-    email: astaxie@gmail.com
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    email: 610087273@qq.com
 basePath: /v1
 paths:
   /mongoC/CreateOneDocument:
