@@ -38,13 +38,16 @@ func init() {
 
 	// 日志双写到ES
 	// 官方esAdapter有问题，注册自己的esAdapter
-	logs.Register("esLog", NewES)
-	Log = logs.NewLogger(1000)
-	dsn := beego.AppConfig.String("esLog")
-	// 将log同步到es
-	err2 := Log.SetLogger("esLog", `{"dsn":"`+dsn+`"}`)
-	if err2 != nil {
-		panic("日志输出到Es失败，err： " + err2.Error())
+	isEnableEsLog, err := beego.AppConfig.Bool("EnableEsLog")
+	if err == nil || isEnableEsLog {
+		logs.Register("esLog", NewES)
+		Log = logs.NewLogger(1000)
+		dsn := beego.AppConfig.String("esLog")
+		// 将log同步到es
+		err2 := Log.SetLogger("esLog", `{"dsn":"`+dsn+`"}`)
+		if err2 != nil {
+			panic("日志输出到Es失败，err： " + err2.Error())
+		}
 	}
 
 	// 输出调用的文件名和文件行号
