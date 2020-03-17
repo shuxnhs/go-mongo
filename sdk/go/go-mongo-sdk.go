@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	url2 "net/url"
 	"strings"
 )
 
@@ -49,7 +50,7 @@ func (g *GoMongoSDK) httpRequest(url string, reqType string, params map[string]s
 	if len(params) != 0 {
 		url += "?"
 		for key, value := range params {
-			url += key + "=" + value + "&"
+			url += key + "=" + url2.QueryEscape(value) + "&"
 		}
 	}
 	var resp *http.Response
