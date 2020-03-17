@@ -39,7 +39,7 @@ func init() {
 	// 日志双写到ES
 	// 官方esAdapter有问题，注册自己的esAdapter
 	isEnableEsLog, err := beego.AppConfig.Bool("EnableEsLog")
-	if err == nil || isEnableEsLog {
+	if err == nil && isEnableEsLog {
 		logs.Register("esLog", NewES)
 		Log = logs.NewLogger(1000)
 		dsn := beego.AppConfig.String("esLog")
