@@ -921,93 +921,217 @@ func TestMongoConnection_MultiDeleteData(t *testing.T) {
 	}
 }
 
-//func TestMongoConnection_Create2DSphereIndex(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
-//	type args struct {
-//		key       string
-//		indexName string
-//	}
-//	tests := []struct {
-//		name    string
-//		fields  fields
-//		args    args
-//		want    string
-//		wantErr bool
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
-//				MK:         tt.fields.MK,
-//				Database:   tt.fields.Database,
-//				Collection: tt.fields.Collection,
-//				Mongo:      tt.fields.Mongo,
-//			}
-//			got, err := mc.Create2DSphereIndex(tt.args.key, tt.args.indexName)
-//			if (err != nil) != tt.wantErr {
-//				t.Errorf("Create2DSphereIndex() error = %v, wantErr %v", err, tt.wantErr)
-//				return
-//			}
-//			if got != tt.want {
-//				t.Errorf("Create2DSphereIndex() got = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
+// 全文搜索模块的测试
+func TestMongoConnection_CreateFullTextIndex(t *testing.T) {
+	type args struct {
+		key       string
+		indexName string
+	}
+	tests := []testSampleWithInsertValue{
+		{
+			"sample1",
+			fields{
+				Mk,
+				Database,
+				Collection,
+				MongoClient,
+			},
+			args{
+				key:       "text",
+				indexName: "idx-fulltext",
+			},
+			"",
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mc := &models.MongoConnection{
+				MK:         tt.fields.MK,
+				Database:   tt.fields.Database,
+				Collection: tt.fields.Collection,
+				Mongo:      tt.fields.Mongo,
+			}
+			// 先新增文档
+			if _, err := mc.CreateObject(map[string]interface{}{
+				"title": "hello world",
+				"text":  "this is hello world",
+			}); err != nil {
+				t.Errorf("can not add document to test CreateFullTextIndex")
+				return
+			}
+			args := tt.args.(args)
+			got, err := mc.CreateFullTextIndex(args.key, args.indexName)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("CreateFullTextIndex() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got == tt.want {
+				t.Errorf("CreateFullTextIndex() got = %v, want %v", got, tt.want)
+			}
+			t.Logf("CreateFullTextIndex() got = %v", got)
+		})
+	}
+}
 
-//func TestMongoConnection_CreateFullTextIndex(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
-//	type args struct {
-//		key       string
-//		indexName string
-//	}
-//	tests := []struct {
-//		name    string
-//		fields  fields
-//		args    args
-//		want    string
-//		wantErr bool
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
-//				MK:         tt.fields.MK,
-//				Database:   tt.fields.Database,
-//				Collection: tt.fields.Collection,
-//				Mongo:      tt.fields.Mongo,
-//			}
-//			got, err := mc.CreateFullTextIndex(tt.args.key, tt.args.indexName)
-//			if (err != nil) != tt.wantErr {
-//				t.Errorf("CreateFullTextIndex() error = %v, wantErr %v", err, tt.wantErr)
-//				return
-//			}
-//			if got != tt.want {
-//				t.Errorf("CreateFullTextIndex() got = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
+func TestMongoConnection_FullTextFind(t *testing.T) {
+	type args struct {
+		text string
+		num  int64
+	}
+	tests := []testSampleWithInsertValue{
+		{
+			"sample1",
+			fields{
+				Mk,
+				Database,
+				Collection,
+				MongoClient,
+			},
+			args{
+				text: "hello",
+				num:  int64(1),
+			},
+			models.Document{},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mc := &models.MongoConnection{
+				MK:         tt.fields.MK,
+				Database:   tt.fields.Database,
+				Collection: tt.fields.Collection,
+				Mongo:      tt.fields.Mongo,
+			}
+			args := tt.args.(args)
+			got, err := mc.FullTextFind(args.text, args.num)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FullTextFind() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FullTextFind() got = %v, no want %v", got, tt.want)
+			}
+			if len(got) <= 0 {
+				t.Errorf("FullTextFind() got no document : %v", got)
+			}
+			t.Logf("FullTextFind() got document : %v", got)
+		})
+	}
+}
 
+// lbs模块的测试
+func TestMongoConnection_Create2DSphereIndex(t *testing.T) {
+	type args struct {
+		key       string
+		indexName string
+	}
+	tests := []testSampleWithInsertValue{
+		{
+			"sample1",
+			fields{
+				Mk,
+				Database,
+				Collection,
+				MongoClient,
+			},
+			args{
+				key:       "geo",
+				indexName: "idx-lbs",
+			},
+			"",
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mc := &models.MongoConnection{
+				MK:         tt.fields.MK,
+				Database:   tt.fields.Database,
+				Collection: tt.fields.Collection,
+				Mongo:      tt.fields.Mongo,
+			}
+			// 先新增带有location的文档
+			geo := make(map[string]interface{})
+			geo["type"] = "Point"
+			geo["coordinates"] = []float64{110, 23}
+			if _, err := mc.CreateObject(map[string]interface{}{
+				"name": "hxh",
+				"geo":  geo,
+			}); err != nil {
+				t.Errorf("can not add document to test Create2DSphereIndex")
+				return
+			}
+			args := tt.args.(args)
+			got, err := mc.Create2DSphereIndex(args.key, args.indexName)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Create2DSphereIndex() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got == tt.want {
+				t.Errorf("Create2DSphereIndex() got = %v, want %v", got, tt.want)
+			}
+			t.Logf("Create2DSphereIndex() got = %v", got)
+		})
+	}
+}
+
+func TestMongoConnection_FindNearLBS(t *testing.T) {
+	type args struct {
+		lon         float64
+		lat         float64
+		maxDistance int64
+		minDistance int64
+		num         int64
+	}
+	tests := []testSampleWithInsertValue{
+		{
+			"sample1",
+			fields{
+				Mk,
+				Database,
+				Collection,
+				MongoClient,
+			},
+			args{
+				lon:         110.110,
+				lat:         23.23,
+				maxDistance: int64(100000000),
+				minDistance: int64(1),
+				num:         int64(1),
+			},
+			[]*models.Document{},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mc := &models.MongoConnection{
+				MK:         tt.fields.MK,
+				Database:   tt.fields.Database,
+				Collection: tt.fields.Collection,
+				Mongo:      tt.fields.Mongo,
+			}
+			args := tt.args.(args)
+			got, err := mc.FindNearLBS(args.lon, args.lat, args.maxDistance, args.minDistance, args.num)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FindNearLBS() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FindNearLBS() got = %v, want %v", got, tt.want)
+			}
+			if len(got) <= 0 {
+				t.Errorf("FindNearLBS() got no document : %v", got)
+			}
+			t.Logf("FindNearLBS() got : %v", got)
+		})
+	}
+}
+
+// 索引创建的测试
 //func TestMongoConnection_CreateIndex(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
 //	type args struct {
 //		name         string
 //		isBackground bool
@@ -1016,295 +1140,45 @@ func TestMongoConnection_MultiDeleteData(t *testing.T) {
 //		isSetSparse  bool
 //		keys         []string
 //	}
-//	tests := []struct {
-//		name    string
-//		fields  fields
-//		args    args
-//		want    string
-//		wantErr bool
-//	}{
-//		// TODO: Add test cases.
+//	tests := []testSampleWithInsertValue{
+//		{
+//			"sample1",
+//			fields{
+//				Mk,
+//				Database,
+//				Collection,
+//				MongoClient,
+//			},
+//			args{
+//				name:         "idx-simple",
+//				isBackground: false,
+//				isUnique:     false,
+//				weight:       1,
+//				isSetSparse:  false,
+//				keys:         []string{"name"},
+//			},
+//			"",
+//			false,
+//		},
 //	}
 //	for _, tt := range tests {
 //		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
+//			mc := &models.MongoConnection{
 //				MK:         tt.fields.MK,
 //				Database:   tt.fields.Database,
 //				Collection: tt.fields.Collection,
 //				Mongo:      tt.fields.Mongo,
 //			}
-//			got, err := mc.CreateIndex(tt.args.name, tt.args.isBackground, tt.args.isUnique, tt.args.weight, tt.args.isSetSparse, tt.args.keys...)
+//			args := tt.args.(args)
+//			got, err := mc.CreateIndex(args.name, args.isBackground, args.isUnique, args.weight, args.isSetSparse, args.keys...)
 //			if (err != nil) != tt.wantErr {
 //				t.Errorf("CreateIndex() error = %v, wantErr %v", err, tt.wantErr)
 //				return
 //			}
-//			if got != tt.want {
+//			if got == tt.want {
 //				t.Errorf("CreateIndex() got = %v, want %v", got, tt.want)
 //			}
-//		})
-//	}
-//}
-//
-
-//func TestMongoConnection_CurCollection(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
-//	tests := []struct {
-//		name   string
-//		fields fields
-//		want   *mongo.Collection
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
-//				MK:         tt.fields.MK,
-//				Database:   tt.fields.Database,
-//				Collection: tt.fields.Collection,
-//				Mongo:      tt.fields.Mongo,
-//			}
-//			if got := mc.CurCollection(); !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("CurCollection() = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-
-//func TestMongoConnection_FindNearLBS(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
-//	type args struct {
-//		lon         float64
-//		lat         float64
-//		maxDistance int64
-//		minDistance int64
-//		num         int64
-//	}
-//	tests := []struct {
-//		name    string
-//		fields  fields
-//		args    args
-//		want    []*Document
-//		wantErr bool
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
-//				MK:         tt.fields.MK,
-//				Database:   tt.fields.Database,
-//				Collection: tt.fields.Collection,
-//				Mongo:      tt.fields.Mongo,
-//			}
-//			got, err := mc.FindNearLBS(tt.args.lon, tt.args.lat, tt.args.maxDistance, tt.args.minDistance, tt.args.num)
-//			if (err != nil) != tt.wantErr {
-//				t.Errorf("FindNearLBS() error = %v, wantErr %v", err, tt.wantErr)
-//				return
-//			}
-//			if !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("FindNearLBS() got = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-
-//func TestMongoConnection_FullTextFind(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
-//	type args struct {
-//		text string
-//		num  int64
-//	}
-//	tests := []struct {
-//		name    string
-//		fields  fields
-//		args    args
-//		want    []*Document
-//		wantErr bool
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
-//				MK:         tt.fields.MK,
-//				Database:   tt.fields.Database,
-//				Collection: tt.fields.Collection,
-//				Mongo:      tt.fields.Mongo,
-//			}
-//			got, err := mc.FullTextFind(tt.args.text, tt.args.num)
-//			if (err != nil) != tt.wantErr {
-//				t.Errorf("FullTextFind() error = %v, wantErr %v", err, tt.wantErr)
-//				return
-//			}
-//			if !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("FullTextFind() got = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-
-//func TestMongoConnection_SwitchCollection(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
-//	type args struct {
-//		Collection string
-//	}
-//	tests := []struct {
-//		name   string
-//		fields fields
-//		args   args
-//		want   *MongoConnection
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
-//				MK:         tt.fields.MK,
-//				Database:   tt.fields.Database,
-//				Collection: tt.fields.Collection,
-//				Mongo:      tt.fields.Mongo,
-//			}
-//			if got := mc.SwitchCollection(tt.args.Collection); !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("SwitchCollection() = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-
-//func TestMongoConnection_SwitchDatabase(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
-//	type args struct {
-//		Database string
-//	}
-//	tests := []struct {
-//		name   string
-//		fields fields
-//		args   args
-//		want   *MongoConnection
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
-//				MK:         tt.fields.MK,
-//				Database:   tt.fields.Database,
-//				Collection: tt.fields.Collection,
-//				Mongo:      tt.fields.Mongo,
-//			}
-//			if got := mc.SwitchDatabase(tt.args.Database); !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("SwitchDatabase() = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-
-//func TestMongoConnection_condOperateChange(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
-//	type args struct {
-//		cond string
-//	}
-//	tests := []struct {
-//		name   string
-//		fields fields
-//		args   args
-//		want   string
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
-//				MK:         tt.fields.MK,
-//				Database:   tt.fields.Database,
-//				Collection: tt.fields.Collection,
-//				Mongo:      tt.fields.Mongo,
-//			}
-//			if got := mc.condOperateChange(tt.args.cond); got != tt.want {
-//				t.Errorf("condOperateChange() = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-
-//func TestMongoConnection_getContext(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
-//	tests := []struct {
-//		name    string
-//		fields  fields
-//		wantCtx context.Context
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
-//				MK:         tt.fields.MK,
-//				Database:   tt.fields.Database,
-//				Collection: tt.fields.Collection,
-//				Mongo:      tt.fields.Mongo,
-//			}
-//			if gotCtx := mc.getContext(); !reflect.DeepEqual(gotCtx, tt.wantCtx) {
-//				t.Errorf("getContext() = %v, want %v", gotCtx, tt.wantCtx)
-//			}
-//		})
-//	}
-//}
-//
-
-//func TestNewMongoConnection(t *testing.T) {
-//	type args struct {
-//		mp         *models.MongoProxy
-//		Mk         string
-//		Collection string
-//	}
-//	tests := []struct {
-//		name string
-//		args args
-//		want *models.MongoConnection
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			if got := NewMongoConnection(tt.args.mp, tt.args.Mk, tt.args.Collection); !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("NewMongoConnection() = %v, want %v", got, tt.want)
-//			}
+//			t.Logf("CreateIndex() got = %v", got)
 //		})
 //	}
 //}
