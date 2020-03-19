@@ -820,7 +820,7 @@
                     {
                         "in": "query",
                         "name": "update",
-                        "description": "条件更新文档的数据,{name:hxh}",
+                        "description": "条件更新文档的数据,更新的字段必须是filter中有的,{name:hxh}",
                         "required": true,
                         "type": "string"
                     }
@@ -1008,7 +1008,7 @@
                     {
                         "in": "query",
                         "name": "update",
-                        "description": "条件更新文档的数据，json传递，如{name:hxh}",
+                        "description": "条件更新文档的数据，json传递，更新的字段必须是filter中有的，如{name:hxh}",
                         "required": true,
                         "type": "string"
                     }

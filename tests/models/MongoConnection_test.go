@@ -80,6 +80,7 @@ func TestMongoConnection_CheckPing(t *testing.T) {
 	}
 }
 
+// MongoC模块的单元测试
 func TestMongoConnection_CreateObject(t *testing.T) {
 	tests := []testSampleWithInsertValue{
 		{
@@ -166,6 +167,7 @@ func TestMongoConnection_MultiCreateData(t *testing.T) {
 	}
 }
 
+// MongoR模块的单元测试
 func TestMongoConnection_CondOperateCount(t *testing.T) {
 	type Args struct {
 		cond  string
@@ -220,12 +222,6 @@ func TestMongoConnection_CondOperateFind(t *testing.T) {
 		value int64
 		num   int64
 	}
-	Args := args{
-		cond:  "=",
-		key:   "age",
-		value: int64(1),
-		num:   1,
-	}
 	tests := []testSampleWithInsertValue{
 		{
 			"sample1",
@@ -235,7 +231,12 @@ func TestMongoConnection_CondOperateFind(t *testing.T) {
 				Collection,
 				MongoClient,
 			},
-			Args,
+			args{
+				cond:  "=",
+				key:   "age",
+				value: int64(1),
+				num:   1,
+			},
 			[]*models.Document{}, // 空的
 			false,
 		},
@@ -398,13 +399,6 @@ func TestMongoConnection_FreeGetDataList(t *testing.T) {
 		filter        models.FilterMap
 		num           int64
 	}
-	Args := args{
-		projectionOpt: nil,
-		filter: map[string]interface{}{
-			"name": "hxh",
-		},
-		num: int64(1),
-	}
 
 	tests := []testSampleWithInsertValue{
 		{
@@ -415,7 +409,13 @@ func TestMongoConnection_FreeGetDataList(t *testing.T) {
 				Collection,
 				MongoClient,
 			},
-			Args,
+			args{
+				projectionOpt: nil,
+				filter: map[string]interface{}{
+					"name": "hxh",
+				},
+				num: int64(1),
+			},
 			[]*models.Document{}, // 空的
 			false,
 		},
@@ -428,7 +428,7 @@ func TestMongoConnection_FreeGetDataList(t *testing.T) {
 				Collection: tt.fields.Collection,
 				Mongo:      tt.fields.Mongo,
 			}
-			Args = tt.args.(args)
+			Args := tt.args.(args)
 			got, err := mc.FreeGetDataList(Args.projectionOpt, Args.filter, Args.num)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FreeGetDataList() error = %v, wantErr %v", err, tt.wantErr)
@@ -484,8 +484,8 @@ func TestMongoConnection_GetDataList(t *testing.T) {
 	}
 }
 
-// 依赖新增文档的测试提供的ObjectId， 单独跑会不通过
 func TestMongoConnection_RetrieveObject(t *testing.T) {
+	// 依赖新增文档的测试提供的ObjectId， 单独跑会不通过
 	tests := []testSampleWithInsertValue{
 		{
 			"sample1",
@@ -522,6 +522,290 @@ func TestMongoConnection_RetrieveObject(t *testing.T) {
 	}
 }
 
+// MongoU模块的单元测试
+func TestMongoConnection_UpdateOneData(t *testing.T) {
+	type args struct {
+		filter models.FilterMap
+		update models.UpdateMap
+	}
+	tests := []testSampleWithInsertValue{
+		{
+			"sample1",
+			fields{
+				Mk,
+				Database,
+				Collection,
+				MongoClient,
+			},
+			args{
+				filter: map[string]interface{}{
+					"name": "hxh",
+					"age":  2,
+				},
+				update: map[string]interface{}{
+					"age": 3,
+				},
+			},
+			mongo.UpdateResult{
+				MatchedCount:  0,
+				ModifiedCount: 0,
+				UpsertedCount: 0,
+				UpsertedID:    nil,
+			}, // 空的
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mc := &models.MongoConnection{
+				MK:         tt.fields.MK,
+				Database:   tt.fields.Database,
+				Collection: tt.fields.Collection,
+				Mongo:      tt.fields.Mongo,
+			}
+			args := tt.args.(args)
+			got, err := mc.UpdateOneData(args.filter, args.update)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UpdateOneData() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if reflect.DeepEqual(got, tt.want) {
+				t.Errorf("UpdateOneData() got = %v, no want %v", got, tt.want)
+			}
+			if got.MatchedCount == int64(0) || got.ModifiedCount == int64(0) {
+				t.Errorf("UpdateOneData() data no update, got = %v", got)
+			}
+			t.Logf("UpdateOneData() data update, got = %v", got)
+		})
+	}
+}
+
+func TestMongoConnection_UpdateDataById(t *testing.T) {
+	type args struct {
+		objectId string
+		update   models.UpdateMap
+	}
+	tests := []testSampleWithInsertValue{
+		{
+			"sample1",
+			fields{
+				Mk,
+				Database,
+				Collection,
+				MongoClient,
+			},
+			args{
+				objectId: ObjectId,
+				update: map[string]interface{}{
+					"age": 2,
+				},
+			},
+			mongo.UpdateResult{
+				MatchedCount:  0,
+				ModifiedCount: 0,
+				UpsertedCount: 0,
+				UpsertedID:    nil,
+			}, // 空的
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mc := &models.MongoConnection{
+				MK:         tt.fields.MK,
+				Database:   tt.fields.Database,
+				Collection: tt.fields.Collection,
+				Mongo:      tt.fields.Mongo,
+			}
+			args := tt.args.(args)
+			got, err := mc.UpdateDataById(args.objectId, args.update)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UpdateDataById() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if reflect.DeepEqual(got, tt.want) {
+				t.Errorf("UpdateDataById() got = %v, no Want %v", got, tt.want)
+			}
+			if got.MatchedCount == int64(0) || got.ModifiedCount == int64(0) {
+				t.Errorf("UpdateDataById() data no update, got = %v", got)
+			}
+			t.Logf("UpdateDataById() data update, got = %v", got)
+		})
+	}
+}
+
+func TestMongoConnection_ReplaceOneData(t *testing.T) {
+	type args struct {
+		filter models.FilterMap
+		update models.UpdateMap
+	}
+	tests := []testSampleWithInsertValue{
+		{
+			"sample1",
+			fields{
+				Mk,
+				Database,
+				Collection,
+				MongoClient,
+			},
+			args{
+				filter: map[string]interface{}{
+					"name": "hxh",
+					"age":  2,
+				},
+				update: map[string]interface{}{
+					"name": "hxh",
+					"age":  1,
+				},
+			},
+			mongo.UpdateResult{
+				MatchedCount:  0,
+				ModifiedCount: 0,
+				UpsertedCount: 0,
+				UpsertedID:    nil,
+			}, // 空的
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mc := &models.MongoConnection{
+				MK:         tt.fields.MK,
+				Database:   tt.fields.Database,
+				Collection: tt.fields.Collection,
+				Mongo:      tt.fields.Mongo,
+			}
+			args := tt.args.(args)
+			got, err := mc.ReplaceOneData(args.filter, args.update)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ReplaceOneData() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ReplaceOneData() got = %v, no Want %v", got, tt.want)
+			}
+			if got.MatchedCount == int64(0) || got.ModifiedCount == int64(0) {
+				t.Errorf("ReplaceOneData() data no update, got = %v", got)
+			}
+			t.Logf("ReplaceOneData() data update, got = %v", got)
+		})
+	}
+}
+
+func TestMongoConnection_ReplaceDataById(t *testing.T) {
+	type args struct {
+		objectId string
+		update   models.UpdateMap
+	}
+	tests := []testSampleWithInsertValue{
+		{
+			"sample1",
+			fields{
+				Mk,
+				Database,
+				Collection,
+				MongoClient,
+			},
+			args{
+				objectId: ObjectId,
+				update: map[string]interface{}{
+					"name": "hxh",
+					"age":  1,
+				},
+			},
+			mongo.UpdateResult{
+				MatchedCount:  0,
+				ModifiedCount: 0,
+				UpsertedCount: 0,
+				UpsertedID:    nil,
+			}, // 空的
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mc := &models.MongoConnection{
+				MK:         tt.fields.MK,
+				Database:   tt.fields.Database,
+				Collection: tt.fields.Collection,
+				Mongo:      tt.fields.Mongo,
+			}
+			args := tt.args.(args)
+			got, err := mc.ReplaceDataById(args.objectId, args.update)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ReplaceDataById() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ReplaceDataById() got = %v, no Want %v", got, tt.want)
+			}
+			if got.MatchedCount == int64(0) || got.ModifiedCount == int64(0) {
+				t.Errorf("ReplaceDataById() data no update, got = %v", got)
+			}
+			t.Logf("ReplaceDataById() data update, got = %v", got)
+		})
+	}
+}
+
+func TestMongoConnection_MultiUpdateData(t *testing.T) {
+	type args struct {
+		filter models.FilterMap
+		update models.UpdateMap
+	}
+	Args := args{
+		filter: map[string]interface{}{
+			"name": "hxh",
+			"age":  3,
+		},
+		update: map[string]interface{}{
+			"age": 4,
+		},
+	}
+	tests := []testSampleWithInsertValue{
+		{
+			"sample1",
+			fields{
+				Mk,
+				Database,
+				Collection,
+				MongoClient,
+			},
+			Args,
+			mongo.UpdateResult{
+				MatchedCount:  0,
+				ModifiedCount: 0,
+				UpsertedCount: 0,
+				UpsertedID:    nil,
+			}, // 空的
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mc := &models.MongoConnection{
+				MK:         tt.fields.MK,
+				Database:   tt.fields.Database,
+				Collection: tt.fields.Collection,
+				Mongo:      tt.fields.Mongo,
+			}
+			args := tt.args.(args)
+			got, err := mc.MultiUpdateData(args.filter, args.update)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("MultiUpdateData() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if reflect.DeepEqual(got, tt.want) {
+				t.Errorf("MultiUpdateData() got = %v, no want %v", got, tt.want)
+			}
+			if got.MatchedCount == int64(0) || got.ModifiedCount == int64(0) {
+				t.Errorf("MultiUpdateData() data no update, got = %v", got)
+			}
+			t.Logf("MultiUpdateData() data update, got = %v", got)
+		})
+	}
+}
+
+// MongoD模块的单元测试
 func TestMongoConnection_DeleteDataById(t *testing.T) {
 	tests := []testSampleWithInsertValue{
 		{
@@ -607,7 +891,7 @@ func TestMongoConnection_MultiDeleteData(t *testing.T) {
 				MongoClient,
 			},
 			map[string]interface{}{
-				"age": 2,
+				"age": 4,
 			},
 			&mongo.DeleteResult{DeletedCount: int64(0)},
 			false,
@@ -874,126 +1158,6 @@ func TestMongoConnection_MultiDeleteData(t *testing.T) {
 //	}
 //}
 
-//func TestMongoConnection_MultiUpdateData(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
-//	type args struct {
-//		filter FilterMap
-//		update UpdateMap
-//	}
-//	tests := []struct {
-//		name    string
-//		fields  fields
-//		args    args
-//		want    *mongo.UpdateResult
-//		wantErr bool
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
-//				MK:         tt.fields.MK,
-//				Database:   tt.fields.Database,
-//				Collection: tt.fields.Collection,
-//				Mongo:      tt.fields.Mongo,
-//			}
-//			got, err := mc.MultiUpdateData(tt.args.filter, tt.args.update)
-//			if (err != nil) != tt.wantErr {
-//				t.Errorf("MultiUpdateData() error = %v, wantErr %v", err, tt.wantErr)
-//				return
-//			}
-//			if !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("MultiUpdateData() got = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-
-//func TestMongoConnection_ReplaceDataById(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
-//	type args struct {
-//		objectId string
-//		update   UpdateMap
-//	}
-//	tests := []struct {
-//		name    string
-//		fields  fields
-//		args    args
-//		want    *mongo.UpdateResult
-//		wantErr bool
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
-//				MK:         tt.fields.MK,
-//				Database:   tt.fields.Database,
-//				Collection: tt.fields.Collection,
-//				Mongo:      tt.fields.Mongo,
-//			}
-//			got, err := mc.ReplaceDataById(tt.args.objectId, tt.args.update)
-//			if (err != nil) != tt.wantErr {
-//				t.Errorf("ReplaceDataById() error = %v, wantErr %v", err, tt.wantErr)
-//				return
-//			}
-//			if !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("ReplaceDataById() got = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-
-//func TestMongoConnection_ReplaceOneData(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
-//	type args struct {
-//		filter FilterMap
-//		update UpdateMap
-//	}
-//	tests := []struct {
-//		name    string
-//		fields  fields
-//		args    args
-//		want    *mongo.UpdateResult
-//		wantErr bool
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
-//				MK:         tt.fields.MK,
-//				Database:   tt.fields.Database,
-//				Collection: tt.fields.Collection,
-//				Mongo:      tt.fields.Mongo,
-//			}
-//			got, err := mc.ReplaceOneData(tt.args.filter, tt.args.update)
-//			if (err != nil) != tt.wantErr {
-//				t.Errorf("ReplaceOneData() error = %v, wantErr %v", err, tt.wantErr)
-//				return
-//			}
-//			if !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("ReplaceOneData() got = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-
 //func TestMongoConnection_SwitchCollection(t *testing.T) {
 //	type fields struct {
 //		MK         string
@@ -1055,86 +1219,6 @@ func TestMongoConnection_MultiDeleteData(t *testing.T) {
 //			}
 //			if got := mc.SwitchDatabase(tt.args.Database); !reflect.DeepEqual(got, tt.want) {
 //				t.Errorf("SwitchDatabase() = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-
-//func TestMongoConnection_UpdateDataById(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
-//	type args struct {
-//		objectId string
-//		update   UpdateMap
-//	}
-//	tests := []struct {
-//		name    string
-//		fields  fields
-//		args    args
-//		want    *mongo.UpdateResult
-//		wantErr bool
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
-//				MK:         tt.fields.MK,
-//				Database:   tt.fields.Database,
-//				Collection: tt.fields.Collection,
-//				Mongo:      tt.fields.Mongo,
-//			}
-//			got, err := mc.UpdateDataById(tt.args.objectId, tt.args.update)
-//			if (err != nil) != tt.wantErr {
-//				t.Errorf("UpdateDataById() error = %v, wantErr %v", err, tt.wantErr)
-//				return
-//			}
-//			if !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("UpdateDataById() got = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-
-//func TestMongoConnection_UpdateOneData(t *testing.T) {
-//	type fields struct {
-//		MK         string
-//		Database   string
-//		Collection string
-//		Mongo      *mongo.Client
-//	}
-//	type args struct {
-//		filter FilterMap
-//		update UpdateMap
-//	}
-//	tests := []struct {
-//		name    string
-//		fields  fields
-//		args    args
-//		want    *mongo.UpdateResult
-//		wantErr bool
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			mc := &MongoConnection{
-//				MK:         tt.fields.MK,
-//				Database:   tt.fields.Database,
-//				Collection: tt.fields.Collection,
-//				Mongo:      tt.fields.Mongo,
-//			}
-//			got, err := mc.UpdateOneData(tt.args.filter, tt.args.update)
-//			if (err != nil) != tt.wantErr {
-//				t.Errorf("UpdateOneData() error = %v, wantErr %v", err, tt.wantErr)
-//				return
-//			}
-//			if !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("UpdateOneData() got = %v, want %v", got, tt.want)
 //			}
 //		})
 //	}

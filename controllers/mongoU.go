@@ -46,7 +46,7 @@ func (ctx *MongoUController) UpdateDataById() {
 // @Param	mongoKey		query 	string	true		"mongoKey"
 // @Param   collection		query	string  true		"集合名"
 // @Param    filter  		query	string  true		"条件更新文档的条件，json传递，如{"name":"hxh"}"
-// @Param    update  		query	string  true		"条件更新文档的数据，json传递，如{"name":"hxh"}"
+// @Param    update  		query	string  true		"条件更新文档的数据，json传递，更新的字段必须是filter中有的，如{"name":"hxh"}"
 // @Success 0 {string} 更新成功
 // @Failure 1 {string} 更新失败
 // @router /UpdateOneData [post]
@@ -81,7 +81,7 @@ func (ctx *MongoUController) UpdateOneData() {
 // @Param	mongoKey		query 	string	true		"mongoKey"
 // @Param   collection		query	string  true		"集合名"
 // @Param   filter  		query	string  true		"条件更新文档的条件,{"name":"hxh"}"
-// @Param   update  		query	string  true		"条件更新文档的数据,{"name":"hxh"}"
+// @Param   update  		query	string  true		"条件更新文档的数据,更新的字段必须是filter中有的,{"name":"hxh"}"
 // @Success 0 {string} 更新成功
 // @Failure 1 {string} 更新失败
 // @router /MultiUpdateData [post]
