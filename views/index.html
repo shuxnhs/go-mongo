@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="sHuXnHs">
+    <meta name="generator" content="Jekyll v3.8.6">
+    <title>go-mongo管理后台</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"></script>
+    <script  type="text/javascript"  src="/views/go-mongo-sdk.js"></script>
+    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+
+</head>
+<body>
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Go-Mongo-Admin</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text-dark" href="http://go-mongo.shuxnhs.xyz/swagger/" target="_blank">接口文档</a>
+        <a class="p-2 text-dark" href="https://www.mongodb.com/blog/post/mongodb-go-driver-tutorial" target="_blank">mongoDB文档</a>
+        <a class="p-2 text-dark" href="#" target="_blank">项目接入</a>
+        <a class="p-2 text-dark" href="https://github.com/shuxnhs/go-mongo" target="_blank">github</a>
+    </nav>
+    <button class="btn btn-outline-primary">
+        <svg class="bi bi-person" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M13 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1h10zm-9.995-.944v-.002.002zM3.022 13h9.956a.274.274 0 00.014-.002l.008-.002c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664a1.05 1.05 0 00.022.004zm9.974.056v-.002.002zM8 7a2 2 0 100-4 2 2 0 000 4zm3-2a3 3 0 11-6 0 3 3 0 016 0z" clip-rule="evenodd"/>
+        </svg>管理员
+    </button>
+</div>
+
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">当前已注册的项目</h1>
+    <p class="lead">当前已注册使用中的项目</p>
+</div>
+
+<div class="container">
+
+    {{/*项目*/}}
+    <div class="card-deck mb-3 text-center" id="project-list"></div>
+
+
+    <br>
+    <br>
+
+
+    <div id="main" style="width: 1100px;height:400px"></div>
+    <script type="text/javascript">
+        var myChart = echarts.init(document.getElementById('main'));
+        // 指定图表的配置项和数据
+        option = {
+            title: {
+                text: '项目流量'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            legend: {
+                data: ['本地测试', '单元测试专用', '毕设专用', '电影推荐系统', '线上测试专用']
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value'
+                }
+            ],
+            series: [
+                {
+                    name: '本地测试',
+                    type: 'line',
+                    stack: '流量',
+                    areaStyle: {},
+                    data: [120, 132, 101, 134, 90, 230, 210]
+                },
+                {
+                    name: '单元测试专用',
+                    type: 'line',
+                    stack: '流量',
+                    areaStyle: {},
+                    data: [220, 182, 191, 234, 290, 330, 310]
+                },
+                {
+                    name: '视频广告',
+                    type: 'line',
+                    stack: '流量',
+                    areaStyle: {},
+                    data: [150, 232, 201, 154, 190, 330, 410]
+                },
+                {
+                    name: '线上测试专用',
+                    type: 'line',
+                    stack: '流量',
+                    areaStyle: {},
+                    data: [320, 332, 301, 334, 390, 330, 320]
+                },
+                {
+                    name: '毕设专用',
+                    type: 'line',
+                    stack: '流量',
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'top'
+                        }
+                    },
+                    areaStyle: {},
+                    data: [820, 932, 901, 934, 1290, 1330, 1320]
+                }
+            ]
+        };
+
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+
+    <footer class="pt-4 my-md-5 pt-md-5 border-top">
+        <div class="row">
+            <div class="col-12 col-md">
+                <small class="d-block mb-3 text-muted">&copy; 2017-2020</small>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+<script>
+    let map = new Map();
+    url = request("project", "getAllProject", map, "GET");
+    $.ajax({
+        url: url,
+        type: "GET",
+        dataType: 'json',
+    })
+    .success(function(data) {
+        let projectData = data.data.data;
+        for(let i = 0; i < projectData.length; i++) {
+            let projectObj = projectData[i];
+            if (projectObj.is_deleted == '0'){
+                buttonDiv = '<button type="button" class="btn btn-block btn-outline-primary">使用中</button>\n'
+            }else {
+                buttonDiv = '<button type="button" class="btn btn-danger btn-outline-primary">禁止使用</button>\n'
+            }
+            let projectDiv = '<div class="card mb-4 shadow-sm">\n' +
+                '            <div class="card-header">\n' +
+                '                <h4 class="my-0 font-weight-normal">' + projectObj.id +'</h4>\n' +
+                '            </div>\n' +
+                '            <div class="card-body">\n' +
+                '                <h1 class="card-title pricing-card-title">' + projectObj.project_name + '</h1>\n' +
+                '                <ul class="list-unstyled mt-3 mb-4">\n' +
+                '                    <li><mark>mongo-Key: </mark>'+ projectObj.mongo_key + '</li>\n' +
+                '                </ul>\n' + buttonDiv +
+                '            </div>\n' +
+                '       </div>';
+            let projectList = document.getElementById("project-list");
+            projectList.innerHTML = projectList.innerHTML + projectDiv;
+        }
+    });
+</script>
+</html>
+

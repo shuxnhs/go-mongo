@@ -40,3 +40,19 @@ func (ctx *ProjectController) AddProject() {
 	}
 	ctx.ApiSuccessData("添加成功", mongoKey)
 }
+
+/**----------------后台接口------------------**/
+
+// @Title: 获取项目全部配置
+func (ctx *ProjectController) GetAllProject() {
+	projects, err := models.GetAllProject()
+	if err != nil {
+		ctx.ApiFail(1, fmt.Sprintf("%s", err))
+	}
+	ctx.ApiSuccessData("获取成功", projects)
+}
+
+// @Title: 后台管理界面首页
+func (ctx *ProjectController) Index() {
+	ctx.TplName = "index.html"
+}

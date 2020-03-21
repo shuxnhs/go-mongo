@@ -38,15 +38,11 @@ func AddProject(project Project) (string, error) {
 func GetAllProject() ([]*Project, error) {
 	o := orm.NewOrm()
 	var projects []*Project
-	exist := o.QueryTable("Project").Exist()
-	if exist {
-		_, err := o.QueryTable("Project").All(&projects)
-		if err != nil {
-			return projects, nil
-		}
-		return nil, err
+	_, err := o.QueryTable("project").All(&projects)
+	if err != nil {
+		return projects, nil
 	}
-	return nil, nil
+	return projects, err
 }
 
 // 生成唯一的mongo-key
