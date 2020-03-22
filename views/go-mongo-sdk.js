@@ -15,17 +15,22 @@ function doRequest(url, type, params){
         url += key + "=" + value + "&"
     });
     return url;
-    // let reqType = type.toUpperCase();
-    // $.ajax({
-    //     url: url,
-    //     type: reqType,
-    //     dataType: 'json',
-    //     data: ""
-    // })
-    // .success(function(data) {
-    //     apiData = JSON.stringify(data);
-    //     return apiData
-    //     alert(apiData)
-    // });
-    // return apiData
 }
+
+function delCookie(key) {
+    var date = new Date();
+    date.setTime(date.getTime() - 1);
+    var delValue = getCookie(key);
+    if (!!delValue) {
+        document.cookie = key+'='+delValue+';expires='+date.toGMTString();
+    }
+}
+
+function getCookie(key) {
+    var arr,reg = RegExp('(^| )'+key+'=([^;]+)(;|$)');
+    if (arr = document.cookie.match(reg))
+        return decodeURIComponent(arr[2]);
+    else
+        return null;
+}
+
