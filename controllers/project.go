@@ -61,3 +61,8 @@ func (ctx *ProjectController) Index() {
 func (ctx *ProjectController) Add() {
 	ctx.TplName = "add.html"
 }
+
+// @Title: 后台管理界面添加配置页
+func (ctx *ProjectController) Config() {
+	ctx.TplName = "config.html"
+}

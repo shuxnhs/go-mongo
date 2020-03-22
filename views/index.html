@@ -40,7 +40,7 @@
 <div class="container">
 
     {{/*项目*/}}
-    <div class="card-deck mb-3 text-center" id="project-list"></div>
+    <div class="card-deck col-12  text-center" id="project-list"></div>
 
 
     <br>
@@ -161,26 +161,41 @@
         let projectData = data.data.data;
         for(let i = 0; i < projectData.length; i++) {
             let projectObj = projectData[i];
-            if (projectObj.is_deleted == '0'){
-                buttonDiv = '<button type="button" class="btn btn-block btn-outline-primary">使用中</button>\n'
+            if (projectObj.is_deleted === 0){
+                if(projectObj.host === ""){
+                    config = '<button type="button" class="btn btn-block btn-primary" id="hrefP" onclick="jumpConfig(\''+projectObj.MongoKey+'\')">配置Mongodb</button>'
+                    // var newHref = "config?key=" + projectObj.MongoKey;
+                    // $('#hrefP').attr("href", newHref)
+                }else {
+                    config = '<button type="button" class="btn btn-block btn-outline-primary">Mongodb已配置</button>'
+                }
+                buttonDiv = '<button type="button" class="btn btn-block btn-outline-primary">使用中</button>' + config
             }else {
-                buttonDiv = '<button type="button" class="btn btn-danger btn-outline-primary">禁止使用</button>\n'
+                buttonDiv = '<button type="button" class="btn btn-block btn-primary">禁止使用</button>\n'
             }
-            let projectDiv = '<div class="card mb-4 shadow-sm">\n' +
+            let projectDiv = '<div class="col-md-3"><div class="card mb-2 shadow-sm">\n' +
                 '            <div class="card-header">\n' +
-                '                <h4 class="my-0 font-weight-normal">' + projectObj.id +'</h4>\n' +
+                '                <h4 class="my-0 font-weight-normal">' + projectObj.project_name +'</h4>\n' +
                 '            </div>\n' +
                 '            <div class="card-body">\n' +
                 '                <h1 class="card-title pricing-card-title">' + projectObj.project_name + '</h1>\n' +
                 '                <ul class="list-unstyled mt-3 mb-4">\n' +
-                '                    <li><mark>mongo-Key: </mark>'+ projectObj.mongo_key + '</li>\n' +
+                '                    <li><mark>mongo-Key: </mark>'+ projectObj.MongoKey + '</li>\n' +
+                '                    <li><mark>host: </mark>'+ projectObj.host + '</li>\n' +
+                '                    <li><mark>port: </mark>'+ projectObj.port + '</li>\n' +
+                '                    <li><mark>user: </mark>'+ projectObj.user + '</li>\n' +
+                '                    <li><mark>dbname: </mark>'+ projectObj.dbname + '</li>\n' +
                 '                </ul>\n' + buttonDiv +
                 '            </div>\n' +
-                '       </div>';
+                '       </div></div>';
             let projectList = document.getElementById("project-list");
             projectList.innerHTML = projectList.innerHTML + projectDiv;
         }
     });
+
+    function jumpConfig(mongoKey){
+        window.location.href="config?key=" + mongoKey;
+    }
 </script>
 </html>
 

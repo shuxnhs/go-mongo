@@ -35,14 +35,40 @@ func AddProject(project Project) (string, error) {
 	return MongoKey, nil
 }
 
-func GetAllProject() ([]*Project, error) {
+type projectInfo struct {
+	Project
+	Config
+	// project和config都有MongoKey会冲突
+	MongoKey string
+}
+
+func GetAllProject() ([]projectInfo, error) {
 	o := orm.NewOrm()
 	var projects []*Project
 	_, err := o.QueryTable("project").All(&projects)
 	if err != nil {
-		return projects, nil
+		return []projectInfo{}, nil
 	}
-	return projects, err
+	var projectInfos []projectInfo
+	for i := 0; i < len(projects); i++ {
+		mongoKey := projects[i].Mongo_key
+		config, err := GetMongoConfig(mongoKey)
+		var elem projectInfo
+		if err != nil {
+			elem = projectInfo{
+				Project:  *projects[i],
+				Config:   Config{},
+				MongoKey: mongoKey,
+			}
+		}
+		elem = projectInfo{
+			Project:  *projects[i],
+			Config:   config,
+			MongoKey: mongoKey,
+		}
+		projectInfos = append(projectInfos, elem)
+	}
+	return projectInfos, err
 }
 
 // 生成唯一的mongo-key
