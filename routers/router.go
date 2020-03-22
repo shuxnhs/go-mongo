@@ -11,6 +11,7 @@ import (
 )
 
 func init() {
+	// 对外开放的接口
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/project",
 			beego.NSInclude(
@@ -59,15 +60,16 @@ func init() {
 		),
 	)
 	beego.AddNamespace(ns)
-	// 管理后台界面路由
-	beego.Router("/login", &controllers.ProjectController{}, "*:Login")
-	beego.Router("/admin", &controllers.ProjectController{}, "*:Index")
-	beego.Router("/add", &controllers.ProjectController{}, "*:Add")
-	beego.Router("/config", &controllers.ProjectController{}, "*:Config")
 
-	// 不使用路由注解的接口,不生成接口文档
+	// 管理后台界面路由
+	beego.Router("/login", &controllers.AdminController{}, "*:Login")
+	beego.Router("/admin", &controllers.AdminController{}, "*:Index")
+	beego.Router("/add", &controllers.AdminController{}, "*:Add")
+	beego.Router("/config", &controllers.AdminController{}, "*:Config")
+	beego.Router("/handleLogin", &controllers.AdminController{}, "*:HandleLogin")
+
+	// 不使用路由注解的接口,不生成接口文档，不对外开放
 	beego.Router("/project/getAllProject", &controllers.ProjectController{}, "*:GetAllProject")
-	beego.Router("/handleLogin", &controllers.ProjectController{}, "*:HandleLogin")
 
 	// 静态资源加载
 	beego.SetStaticPath("/views", "views")

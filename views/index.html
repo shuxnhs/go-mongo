@@ -163,8 +163,6 @@
             if (projectObj.is_deleted === 0){
                 if(projectObj.host === ""){
                     config = '<button type="button" class="btn btn-block btn-primary" id="hrefP" onclick="jumpConfig(\''+projectObj.MongoKey+'\')">配置Mongodb</button>'
-                    // var newHref = "config?key=" + projectObj.MongoKey;
-                    // $('#hrefP').attr("href", newHref)
                 }else {
                     config = '<button type="button" class="btn btn-block btn-outline-primary">Mongodb已配置</button>'
                 }
