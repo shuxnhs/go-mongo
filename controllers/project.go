@@ -56,3 +56,8 @@ func (ctx *ProjectController) GetAllProject() {
 func (ctx *ProjectController) Index() {
 	ctx.TplName = "index.html"
 }
+
+// @Title: 后台管理界面添加页
+func (ctx *ProjectController) Add() {
+	ctx.TplName = "add.html"
+}

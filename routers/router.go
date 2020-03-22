@@ -59,8 +59,9 @@ func init() {
 		),
 	)
 	beego.AddNamespace(ns)
-	// 管理后台路由
+	// 管理后台界面路由
 	beego.Router("/admin", &controllers.ProjectController{}, "*:Index")
+	beego.Router("/add", &controllers.ProjectController{}, "*:Add")
 
 	// 不使用路由注解的接口,不生成接口文档
 	beego.Router("/project/getAllProject", &controllers.ProjectController{}, "*:GetAllProject")

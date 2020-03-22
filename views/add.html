@@ -1,0 +1,157 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>项目接入</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        .form-signin {
+            width: 100%;
+            max-width: 420px;
+            padding: 15px;
+            margin: auto;
+        }
+
+        .form-label-group {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .form-label-group > input,
+        .form-label-group > label {
+            height: 3.125rem;
+            padding: .75rem;
+        }
+
+        .form-label-group > label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            width: 100%;
+            margin-bottom: 0; /* Override default `<label>` margin */
+            line-height: 1.5;
+            color: #495057;
+            pointer-events: none;
+            cursor: text; /* Match the input under the label */
+            border: 1px solid transparent;
+            border-radius: .25rem;
+            transition: all .1s ease-in-out;
+        }
+
+        .form-label-group input:not(:placeholder-shown) {
+            padding-top: 1.25rem;
+            padding-bottom: .25rem;
+        }
+
+        .form-label-group input:not(:placeholder-shown) ~ label {
+            padding-top: .25rem;
+            padding-bottom: .25rem;
+            font-size: 12px;
+            color: #777;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <link href="https://cdn.bootcss.com/float-label-css/1.0.1/float-label.css" rel="stylesheet">
+    <script  type="text/javascript"  src="/views/go-mongo-sdk.js"></script>
+</head>
+<body>
+
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Go-Mongo-Admin</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text-dark" href="http://go-mongo.shuxnhs.xyz/swagger/" target="_blank">接口文档</a>
+        <a class="p-2 text-dark" href="https://www.mongodb.com/blog/post/mongodb-go-driver-tutorial" target="_blank">mongoDB文档</a>
+        <a class="p-2 text-dark" href="admin">项目首页</a>
+        <a class="p-2 text-dark" href="https://github.com/shuxnhs/go-mongo" target="_blank">github</a>
+    </nav>
+    <button class="btn btn-outline-primary">
+        <svg class="bi bi-person" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M13 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1h10zm-9.995-.944v-.002.002zM3.022 13h9.956a.274.274 0 00.014-.002l.008-.002c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664a1.05 1.05 0 00.022.004zm9.974.056v-.002.002zM8 7a2 2 0 100-4 2 2 0 000 4zm3-2a3 3 0 11-6 0 3 3 0 016 0z" clip-rule="evenodd"/>
+        </svg>管理员
+    </button>
+</div>
+
+
+<div class="form-signin">
+    <br><br><br><br>
+
+    <div class="text-center mb-4">
+        <img class="mb-4" src="http://cd7.yesapi.net/89E670FD80BA98E7F7D7E81688123F32_20200322003316_29f0431ab9cee61690350b20ad1eb165.png" alt="" width="400" height="200">
+        <h1 class="h3 mb-3 font-weight-normal">项目接入</h1>
+    </div>
+
+    <br><br><br><br><br>
+    <div class="form-label-group">
+        <input type="text" id="name" class="form-control" placeholder="昵称(用途)">
+    </div>
+
+    <br>
+
+    <button class="btn btn-lg btn-primary btn-block" onclick="addProject()">添加</button>
+</div>
+</body>
+<script>
+    function addProject(){
+        let name = $('#name').val();
+        if (name === ""){
+            swal({
+                title: '温馨提示',
+                text: "请输入项目昵称或项目用途",
+                icon:  "error",
+            })
+        }else {
+            let map = new Map();
+            url = request("v1/project", "AddProject", map, "GET");
+            $.ajax({
+                url: url,
+                type: "GET",
+                dataType: 'json',
+                data: {"ProjectName": name},
+            }).success(function(data) {
+                if (data.data.code === 0){
+                    let mongoKey = data.data.data;
+                    let text = " 您的mongoKey为：" + mongoKey;
+                    swal({
+                        title: '温馨提示',
+                        text:  "添加成功！请妥善保存您的mongoKey！！！",
+                        icon: 'success',
+                        timer: 1000,
+                    }).then(function() {
+                        swal({
+                            title: '温馨提示',
+                            text:  text,
+                            icon: 'info',
+                        }).then(function () {
+                            window.location.href="admin"
+                        })
+                    })
+                }else {
+                    swal({
+                        title: '温馨提示',
+                        text: "添加失败，项目已经存在",
+                        icon: 'error',
+                    })
+                }
+
+            }).fail(function () {
+                swal({
+                    title: '温馨提示',
+                    text: "添加失败，请刷新重试",
+                    icon: 'error',
+                })
+            })
+        }
+
+    }
+</script>
+</html>
