@@ -1,7 +1,7 @@
 // <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 // 必须先引入jquery才能使用ajax
 const GO_MONGO_HOST = "http://127.0.0.1:8081";
-const GO_MONGO_KEY = "1DD75A62EB5E561F0F10A9A51270E5A6";
+const GO_MONGO_KEY = "674D5122FEBC0F030C2AD55C9ED25B77";
 
 function request(router, service, params, type){
     let url = GO_MONGO_HOST + "/" + router.trim() + "/" + service.trim();

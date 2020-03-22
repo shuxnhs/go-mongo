@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>go-mongo-admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"></script>
+    <script  type="text/javascript"  src="/views/go-mongo-sdk.js"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: -ms-flexbox;
+            /*display: flex;*/
+            -ms-flex-align: center;
+            align-items: center;
+            /*padding-top: 0px;*/
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+        }
+
+        .form-signin {
+            width: 100%;
+            max-width: 330px;
+            padding: 15px;
+            margin: auto;
+        }
+        .form-signin .form-control {
+            position: relative;
+            box-sizing: border-box;
+            height: auto;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .form-signin .form-control:focus {
+            z-index: 2;
+        }
+        .form-signin input[type="email"] {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        .form-signin input[type="password"] {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Go-Mongo-Admin</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text-dark" href="http://go-mongo.shuxnhs.xyz/swagger/" target="_blank">接口文档</a>
+        <a class="p-2 text-dark" href="https://www.mongodb.com/blog/post/mongodb-go-driver-tutorial" target="_blank">mongoDB文档</a>
+        <a class="p-2 text-dark" href="https://github.com/shuxnhs/go-mongo" target="_blank">github</a>
+    </nav>
+    <button class="btn btn-outline-primary">
+        <svg class="bi bi-person" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M13 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1h10zm-9.995-.944v-.002.002zM3.022 13h9.956a.274.274 0 00.014-.002l.008-.002c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664a1.05 1.05 0 00.022.004zm9.974.056v-.002.002zM8 7a2 2 0 100-4 2 2 0 000 4zm3-2a3 3 0 11-6 0 3 3 0 016 0z" clip-rule="evenodd"/>
+        </svg>游客
+    </button>
+</div>
+
+<br><br><br><br>
+    <form class="form-signin text-center" method="post" action="/handleLogin?mongoKey=674D5122FEBC0F030C2AD55C9ED25B77&collection=user">
+        <img class="mb-4" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2547812886,2793126563&fm=26&gp=0.jpg" alt="" width="100" height="100">
+        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+        <label for="name" class="sr-only">Name</label>
+        <input type="text" id="name" class="form-control" placeholder="Name" name="name" required autofocus>
+        <label for="password"  class="sr-only">Password</label>
+        <input type="password" id="password" class="form-control" placeholder="Password" name="password" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <span>{{.errmsg}}</span>
+        <p class="mt-5 mb-3 text-muted">&copy; 2017-2020</p>
+    </form>
+</body>
+</html>
