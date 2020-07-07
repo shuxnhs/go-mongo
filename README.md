@@ -1,3 +1,6 @@
+# go-mongo
+Golang操作MongoDB的中间件。
+
 # go安装与环境变量配置
 ```shell script
 brew install go
